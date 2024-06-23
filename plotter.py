@@ -113,20 +113,31 @@ class Plotter:
         plt.grid(True)
         plt.show()
 
-    def plot_pair(self, columns, title):
-        plt.figure(figsize=(10, 6))
-        sns.pairplot(self.df[columns])
-        plt.suptitle(title, fontsize=15, fontfamily='serif', color='blue')
+    def plot_pair(self, columns=None, title='Pair Plot'):
+        if columns is not None:
+            g = sns.pairplot(self.df[columns], plot_kws={'alpha': 0.6, 's': 80, 'edgecolor': 'k'})
+        else:
+            g = sns.pairplot(self.df, plot_kws={'alpha': 0.6, 's': 80, 'edgecolor': 'k'})
+        g.fig.suptitle(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.subplots_adjust(top=0.9)
         plt.show()
 
-    def plot_heatmap(self, title):
-        plt.figure(figsize=(10, 6))
-        numeric_df = self.df.select_dtypes(include=[np.number])
-        sns.heatmap(numeric_df.corr(), annot=True, cmap='coolwarm')
+    def plot_heatmap(self, title='Correlation Heatmap'):
+        plt.figure(figsize=(10, 8))
+        # Select only numeric columns and drop any rows with NaN values
+        numeric_df = self.df.select_dtypes(include=[np.number]).dropna()
+        if numeric_df.empty:
+            print("No numeric data available for heatmap.")
+            return
+        corr = numeric_df.corr()
+        sns.heatmap(corr, annot=True, cmap='coolwarm', cbar=True)
         plt.title(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.grid(True)
         plt.show()
 
-    def plot_hist_kde(self, column, title):
+    def plot_hist_kde(self, column, title=None):
+        if title is None:
+            title = f'Histogram with KDE of {column}'
         plt.figure(figsize=(10, 6))
         sns.histplot(self.df[column], kde=True, color='skyblue')
         plt.title(title, fontsize=15, fontfamily='serif', color='blue')
@@ -135,13 +146,20 @@ class Plotter:
         plt.grid(True)
         plt.show()
 
-    def plot_qq(self, column, title):
+    def plot_qq(self, column, title=None):
+        if title is None:
+            title = f'QQ Plot of {column}'
         plt.figure(figsize=(10, 6))
         stats.probplot(self.df[column], dist="norm", plot=plt)
         plt.title(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.xlabel('Theoretical Quantiles', fontsize=12, fontfamily='serif', color='darkred')
+        plt.ylabel('Sample Quantiles', fontsize=12, fontfamily='serif', color='darkred')
+        plt.grid(True)
         plt.show()
 
-    def plot_kde(self, column, title):
+    def plot_kde(self, column, title=None):
+        if title is None:
+            title = f'KDE Plot of {column}'
         plt.figure(figsize=(10, 6))
         sns.kdeplot(self.df[column], fill=True, alpha=0.6, linewidth=2)
         plt.title(title, fontsize=15, fontfamily='serif', color='blue')
@@ -159,11 +177,103 @@ class Plotter:
         plt.grid(True)
         plt.show()
 
-    def plot_box(self, x, y, title):
+    def plot_box(self, x, y, hue=None, title='Default Title'):
         plt.figure(figsize=(10, 6))
-        sns.boxplot(x=self.df[x], y=self.df[y], palette="pastel")
+        if hue:
+            sns.boxplot(x=self.df[x], y=self.df[y], hue=self.df[hue], palette="pastel")
+        else:
+            sns.boxplot(x=self.df[x], y=self.df[y])
         plt.title(title, fontsize=15, fontfamily='serif', color='blue')
         plt.xlabel(x, fontsize=12, fontfamily='serif', color='darkred')
         plt.ylabel(y, fontsize=12, fontfamily='serif', color='darkred')
         plt.grid(True)
+        plt.legend(title=hue) if hue else None
+        plt.show()
+
+        # New plot methods for the missing types
+
+    def plot_stacked_bar(self, x, y, title, xlabel, ylabel):
+        plt.figure(figsize=(10, 6))
+        self.df.groupby([x, y]).size().unstack().plot(kind='bar', stacked=True)
+        plt.title(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.xlabel(xlabel, fontsize=12, fontfamily='serif', color='darkred')
+        plt.ylabel(ylabel, fontsize=12, fontfamily='serif', color='darkred')
+        plt.grid(True)
+        plt.show()
+
+    def plot_area(self, x, y, title):
+        plt.figure(figsize=(10, 6))
+        self.df.plot.area(x=x, y=y)
+        plt.title(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.xlabel(x, fontsize=12, fontfamily='serif', color='darkred')
+        plt.ylabel(y, fontsize=12, fontfamily='serif', color='darkred')
+        plt.grid(True)
+        plt.show()
+
+    def plot_violin(self, x, y, title):
+        plt.figure(figsize=(10, 6))
+        sns.violinplot(data=self.df, x=x, y=y)
+        plt.title(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.xlabel(x, fontsize=12, fontfamily='serif', color='darkred')
+        plt.ylabel(y, fontsize=12, fontfamily='serif', color='darkred')
+        plt.grid(True)
+        plt.show()
+
+    def plot_joint_kde_scatter(self, x, y, title):
+        g = sns.jointplot(data=self.df, x=x, y=y, kind="kde")
+        g.plot_joint(plt.scatter, c="w", s=30, linewidth=1, marker="+")
+        g.ax_joint.collections[0].set_alpha(0)
+        plt.suptitle(title)
+        plt.grid(True)
+        plt.show()
+
+    def plot_rug(self, column, title):
+        plt.figure(figsize=(10, 6))
+        sns.rugplot(data=self.df, x=column)
+        plt.title(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.xlabel(column, fontsize=12, fontfamily='serif', color='darkred')
+        plt.grid(True)
+        plt.show()
+
+    def plot_3d_scatter(self, x, y, z, title):
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.scatter(self.df[x], self.df[y], self.df[z])
+        ax.set_xlabel(x)
+        ax.set_ylabel(y)
+        ax.set_zlabel(z)
+        ax.set_title(title)
+        plt.show()
+
+    def plot_cluster_map(self):
+        # Select only numeric columns from DataFrame
+        numeric_df = self.df.select_dtypes(include=[np.number])
+        if numeric_df.empty:
+            print("No numeric data available for cluster map.")
+            return
+
+        # Compute the correlation matrix
+        corr_matrix = numeric_df.corr()
+
+        # Generate a cluster map
+        sns.clustermap(corr_matrix, cmap='coolwarm', annot=True)
+        plt.show()
+
+    def plot_hexbin(self, x, y, title, gridsize=40, cmap='inferno'):
+        plt.hexbin(self.df[x], self.df[y], gridsize=gridsize, cmap=cmap)
+        plt.colorbar()
+        plt.title(title)
+        plt.show()
+
+    def plot_strip(self, x, y, title):
+        plt.figure(figsize=(12, 8))
+        # sns.stripplot(data=self.df, x=x, y=y)
+        sns.stripplot(data=self.df, x=x, y=y, size=4)
+        plt.title(title)
+        plt.show()
+
+    def plot_swarm(self, x, y, title):
+        plt.figure(figsize=(10, 6))
+        sns.swarmplot(data=self.df, x=x, y=y,size=3)
+        plt.title(title)
         plt.show()

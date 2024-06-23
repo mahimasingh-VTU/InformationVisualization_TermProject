@@ -1,5 +1,6 @@
-import pandas as pd
 
+import pandas as pd
+import matplotlib.pyplot as plt
 class DataExplorer:
     def __init__(self, df):
         self.df = df
@@ -15,3 +16,9 @@ class DataExplorer:
             print(f"{column} : {self.df[column].nunique()} unique values")
         print("Missing Values per Column:")
         print(self.df.isnull().sum())
+
+    def plot_histograms(self):
+        numeric_cols = self.df.select_dtypes(include=['number']).columns
+        self.df[numeric_cols].hist(bins=15, figsize=(15, 6), layout=(2, 4), color='skyblue')
+        plt.tight_layout()
+        plt.show()

@@ -1,5 +1,4 @@
 import urllib
-
 import dash as dash
 import pandas as pd
 import plotly.express as px

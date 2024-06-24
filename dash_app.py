@@ -1,25 +1,36 @@
+import urllib
+
 import dash as dash
 import pandas as pd
 import plotly.express as px
 from dash import html, dcc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
+
 from data_cleaner import DataCleaner
 
 df_raw = pd.read_csv('car_prices.csv')
 df = DataCleaner(df_raw).clean_data()
-
+print(df.info())
+print(df.head())
 """
 Numerical features: ['year', 'condition', 'odometer', 'mmr', 'sellingprice']
-Categorical features: ['make', 'model', 'trim', 'body', 'transmission', 'vin', 'state', 'color', 'interior', 'seller', 'saledate']
+Categorical features: ['make', 'model', 'trim', 'body', 'transmission', 'state', 'color', 'interior', 'seller', 'saledate']
 """
+
+
 def create_dash_app():
     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-    my_app = dash.Dash("Car Sales Dashboard", external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
+    my_app = dash.Dash("Car Sales Dashboard", external_stylesheets=external_stylesheets,
+                       suppress_callback_exceptions=True)
 
     # =============================creating tabs================================
     my_app.layout = html.Div([
-        html.H2('Car Sales Dashboard', style={'textAlign': 'center'}),
+        html.Div([
+            html.Img(src='logo.png', style={'height': '60px', 'width': '60px'}),
+            html.Pre("  "),
+            html.H2('Car Sales Dashboard', style={'textAlign': 'center'}),
+        ], style={'display': 'flex', 'align-items': 'center'}),
         html.Br(),
         dcc.Tabs(
             id='tabs',
@@ -30,7 +41,9 @@ def create_dash_app():
                 dcc.Tab(label='Make and Model Insights', value='insights')
             ]
         ),
-        html.Div(id='layout')
+        html.Div(id='layout'),
+        html.Button("Download Data", id="download-button"),
+        dcc.Download(id="download-data")
     ])
 
     # =============================Overview tab layout================================
@@ -44,7 +57,6 @@ def create_dash_app():
                 type="circle",
                 children=dcc.Graph(id='ov-revenue-by-state-graph')
             ),
-            # dcc.Graph(id='revenue-by-state-graph'),
         ]),
         html.Br(),
         html.Div([
@@ -54,10 +66,12 @@ def create_dash_app():
                 type="circle",
                 children=dcc.Graph(id='ov-top-10-selling-vehicles')
             ),
+            html.Br(),
+            html.Label('Select the year:', htmlFor='ov-year-dropdown'),
             dcc.Dropdown(
-                id = 'ov-year-dropdown',
-                options = [{'label': year, 'value': year} for year in df['year'].unique()],
-                value = df['year'].min()
+                id='ov-year-dropdown',
+                options=[{'label': year, 'value': year} for year in df['year'].unique()],
+                value=df['year'].min()
             )
         ]),
         html.Br(),
@@ -66,7 +80,8 @@ def create_dash_app():
             dcc.Loading(
                 id="ov-loading-3",
                 type="circle",
-                children=dcc.Graph(id='ov-sales-volume-by-state-graph')
+                children=[dcc.Graph(id='ov-sales-volume-by-state-graph')]
+
             )
         ]),
         html.Br(),
@@ -77,6 +92,8 @@ def create_dash_app():
                 type="circle",
                 children=dcc.Graph(id='ov-top-10-makes-pie-graph')
             ),
+            html.Br(),
+            html.P('Select the states:'),
             dcc.Checklist(
                 id='ov-state-checklist',
                 options=[{'label': state, 'value': state} for state in df['state'].unique()],
@@ -108,7 +125,20 @@ def create_dash_app():
                 color='sellingprice',
                 locationmode='USA-states',
                 scope="usa",
-                title='Revenue by State'
+                title='Revenue by State',
+                hover_data=['state', 'sellingprice'],
+                hover_name='state',
+            )
+
+            fig.update_layout(
+                title={
+                    'x': 0.5,
+                    'font': dict(
+                        family="Serif",
+                        size=20,
+                        color='blue'
+                    )
+                },
             )
             return fig
 
@@ -126,6 +156,32 @@ def create_dash_app():
             y='sellingprice',
             title=f'Top 10 Selling Vehicles in {selected_year}'
         )
+        fig.update_layout(
+            title={
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            },
+            xaxis=dict(
+                title='Make',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            ),
+            yaxis=dict(
+                title='Revenue',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            )
+        )
         return fig
 
     # 3. _______________Treemap of Sales Volume by State_______________
@@ -142,6 +198,16 @@ def create_dash_app():
                 values='sellingprice',
                 title='Sales Volume by State'
             )
+            fig.update_layout(
+                title={
+                    'x': 0.5,
+                    'font': dict(
+                        family="Serif",
+                        size=20,
+                        color='blue'
+                    )
+                }
+            )
             return fig
 
     # 4. _______________Pie chart of Top 10 makes by Sales volume_______________
@@ -157,6 +223,16 @@ def create_dash_app():
             values='sellingprice',
             names='make',
             title='Top 10 Makes by Sales Volume'
+        )
+        fig.update_layout(
+            title={
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            }
         )
         return fig
 
@@ -175,8 +251,17 @@ def create_dash_app():
                 title='Total Sales by Body Type',
                 hole=.5,
             )
+            fig.update_layout(
+                title={
+                    'x': 0.5,
+                    'font': dict(
+                        family="Serif",
+                        size=20,
+                        color='blue'
+                    )
+                }
+            )
             return fig
-
 
     # ======================Market Trends tab layout===============================
     market_trends_layout = html.Div([
@@ -206,6 +291,8 @@ def create_dash_app():
                 type="circle",
                 children=dcc.Graph(id='mt-market-share-graph'),
             ),
+            html.Br(),
+            html.P('Select the year range:'),
             dcc.RangeSlider(
                 id='mt-year-slider-1',
                 min=df['year'].min(),
@@ -217,20 +304,19 @@ def create_dash_app():
         ]),
         html.Br(),
         html.Div([
-            # 4. Monthly sales trend by year - input year via slider
-            dcc.Loading(
-                id="mt-loading-4",
-                type="circle",
-                children=dcc.Graph(id='mt-monthly-sales-trend-graph')
-            ),
-            dcc.Slider(
-                id='mt-year-slider-2',
-                min=df['year'].min(),
-                max=df['year'].max(),
-                value=df['year'].min(),
-                marks={str(year): str(year) for year in df['year'].unique()},
-                step=None
-            ),
+            # 4. Sales distribution by category
+            dcc.Graph(id='mt-sales-distribution'),
+            html.Br(),
+            html.P('Select the category:'),
+            dcc.RadioItems(
+                id='mt-distribution-category',
+                options=[
+                    {'label': 'Make', 'value': 'make'},
+                    {'label': 'Body Type', 'value': 'body'},
+                    {'label': 'State', 'value': 'state'}
+                ],
+                value='make'
+            )
         ]),
         html.Br(),
         html.Div([
@@ -240,6 +326,8 @@ def create_dash_app():
                 type="circle",
                 children=dcc.Graph(id='mt-selling-price-body-type-graph')
             ),
+            html.Br(),
+            html.P('Select the body type:'),
             dcc.Dropdown(
                 id='mt-body-type-dropdown',
                 options=[{'label': body, 'value': body} for body in df['body'].unique()],
@@ -264,6 +352,32 @@ def create_dash_app():
                 labels={'sellingprice': 'Highest Price ($)', 'make': 'Make'},
                 height=400
             )
+            fig.update_layout(
+                title={
+                    'x': 0.5,
+                    'font': dict(
+                        family="Serif",
+                        size=20,
+                        color='blue'
+                    )
+                },
+                xaxis=dict(
+
+                    titlefont=dict(
+                        family="Serif",
+                        size=18,
+                        color="darkred"
+                    )
+                ),
+                yaxis=dict(
+
+                    titlefont=dict(
+                        family="Serif",
+                        size=18,
+                        color="darkred"
+                    )
+                )
+            )
             return fig
 
     # 2. Manufacturer distribution by state
@@ -283,7 +397,34 @@ def create_dash_app():
                 labels={'counts': 'Number of Cars', 'state': 'State', 'make': 'Manufacturer'},
                 height=400
             )
+            fig.update_layout(
+                title={
+                    'x': 0.5,
+                    'font': dict(
+                        family="Serif",
+                        size=20,
+                        color='blue'
+                    )
+                },
+                xaxis=dict(
+
+                    titlefont=dict(
+                        family="Serif",
+                        size=18,
+                        color="darkred"
+                    )
+                ),
+                yaxis=dict(
+
+                    titlefont=dict(
+                        family="Serif",
+                        size=18,
+                        color="darkred"
+                    )
+                )
+            )
             return fig
+
     # 3. Make Market Share over the years
     @my_app.callback(
         Output('mt-market-share-graph', 'figure'),
@@ -300,22 +441,71 @@ def create_dash_app():
             mode='lines',
             fill='tozeroy'
         )])
-        fig.update_layout(title='Market Share by Car Make', xaxis_title='Car Make', yaxis_title='Market Share (%)')
+        fig.update_layout(
+            title={
+                'text': 'Market Share by Car Make',
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            },
+            xaxis=dict(
+                title='Car Make',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            ),
+            yaxis=dict(
+                title='Market Share (%)',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            )
+        )
         return fig
 
-    # 4. Monthly sales trend by year - input year via slider
+    # 4. Sales distribution by category
     @my_app.callback(
-        Output('mt-monthly-sales-trend-graph', 'figure'),
-        [Input('mt-year-slider-2', 'value')]
-    )
-    def update_monthly_sales_trend_graph(selected_year):
-        df_filtered = df[df['year'] == selected_year]
-        df_filtered['saledate'] = pd.to_datetime(df_filtered['saledate'])
-        df_filtered = df_filtered.set_index('saledate')
-        monthly_sales = df_filtered['sellingprice'].resample('M').sum()
-        fig = go.Figure(data=go.Scatter(x=monthly_sales.index, y=monthly_sales.values))
-        fig.update_layout(title='Monthly Sales Trend', xaxis_title='Month', yaxis_title='Sales')
+    Output('mt-sales-distribution', 'figure'),
+    Input('mt-distribution-category', 'value')
+)
+    def update_sales_distribution(category):
+        distribution = df[category].value_counts().nlargest(10)
+        fig = px.pie(values=distribution.values, names=distribution.index,
+                     title=f'Sales Distribution by {category.capitalize()}')
+        fig.update_layout(
+            title={
 
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            },
+            xaxis=dict(
+                title='Category',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            ),
+            yaxis=dict(
+                title='Sales Volume',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            )
+        )
         return fig
 
     # 5. Average selling price of [bodytype] over the years - provide a dropdown to select the body type
@@ -333,6 +523,32 @@ def create_dash_app():
             title=f'Average Selling Price of {selected_body_type} Over the Years',
             labels={'sellingprice': 'Average Selling Price ($)', 'year': 'Year'}
         )
+        fig.update_layout(
+            title={
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            },
+            xaxis=dict(
+
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            ),
+            yaxis=dict(
+
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            )
+        )
         return fig
 
     # =======================Make and Model Insights tab layout=======================
@@ -340,33 +556,285 @@ def create_dash_app():
         html.Header('Car Insights', style={'textAlign': 'center'}),
         html.Br(),
         html.Div([
-            # 1. __________________Top 10 models by make - dropdown to select the make_______________
-            dcc.Graph(id='top-10-makes-graph'),
+            # 1. _________________________________
+            dcc.Graph(id='mm-price-range-distribution'),
+            html.Br(),
+            html.P('Choose a make:'),
+            dcc.Dropdown(
+                id='mm-make-model-price-dropdown',
+                options=[{'label': make, 'value': make} for make in df['make'].unique()],
+                value=df['make'].unique()[0]
+            ),
+            html.Br(),
+            html.P('Choose the price range on the slider:'),
+            dcc.RangeSlider(
+                id='mm-price-range-slider',
+                min=df['sellingprice'].min(),
+                max=df['sellingprice'].max(),
+                step=1000,
+                value=[df['sellingprice'].min(), df['sellingprice'].max()],
+                marks={i: f'{i}' for i in range(0, int(df['sellingprice'].max()), 10000)}
+            )
         ]),
-        dcc.RadioItems(
-            id='category_radio',
-            options=[
-                {'label': 'State', 'value': 'state'},
-                {'label': 'Color', 'value': 'color'},
-                {'label': 'Year', 'value': 'year'}
-            ],
-            value='state'
-        ),
+        html.Br(),
+        html.Div([
+            # 2. ________________Top selling makes models_____________________
+            dcc.Graph(id='mm-top-selling-makes-models'),
+            html.Br(),
+            html.P('Select the type of data to display:'),
+            dcc.RadioItems(
+                id='mm-make-model-selector',
+                options=[
+                    {'label': 'Top Makes', 'value': 'make'},
+                    {'label': 'Top Models', 'value': 'model'}
+                ],
+                value='make'
+            ),
+            html.Br(),
+            html.P('Select the number of top makes/models to display:'),
+            dcc.Slider(
+                id='mm-top-n-slider',
+                min=5,
+                max=20,
+                step=1,
+                value=10,
+                marks={i: str(i) for i in range(5, 21, 5)}
+            )
+        ]),
+        html.Br(),
+        html.Div([
+            # 3. _____________________________________
+            dcc.Graph(id='mm-avg-price-make-model'),
+            html.Br(),
+            html.P('Choose the make(s) to display:'),
+            dcc.Dropdown(
+                id='mm-make-dropdown',
+                options=[{'label': make, 'value': make} for make in df['make'].unique()],
+                multi=True,
+                value=df['make'].unique()[:5].tolist()
+            )
+        ]),
+        html.Br(),
+        html.Div([
+            # 4. _____________________________________
+            dcc.Graph(id='mm-body-type-distribution'),
+            html.Br(),
+            html.P('Choose a make:'),
+            dcc.Dropdown(
+                id='mm-make-model-dropdown',
+                options=[{'label': make, 'value': make} for make in df['make'].unique()],
+                value=df['make'].unique()[0]
+            )
+        ]),
+        html.Br(),
+        html.Div([
+            # 5. _____________________________________
+            dcc.Graph(id='mm-price-vs-odometer'),
+            html.Br(),
+            html.P('Choose a make:'),
+            dcc.Dropdown(
+                id='mm-make-model-scatter-dropdown',
+                options=[{'label': make, 'value': make} for make in df['make'].unique()],
+                value=df['make'].unique()[0]
+            )
+        ]),
+        html.Br(),
+        html.Div([
+            # 6. _______________User comments_______________
+            html.Label('Your feedback is valuable to us:', htmlFor='comments-textarea'),
+            dcc.Textarea(
+                id='comments-textarea',
+                placeholder='Enter your comments here...',
+                style={'width': '100%', 'height': 100},
+            ),
+            html.Button('Submit', id='submit-button'),
+        ]),
     ])
 
     @my_app.callback(
-        Output('top-10-makes-graph', 'figure'),
-        [Input('category_radio', 'value')]
+        Output('mm-price-range-distribution', 'figure'),
+        [Input('mm-make-model-price-dropdown', 'value'),
+         Input('mm-price-range-slider', 'value')]
     )
-    def update_tab3(category):
-        top_10_makes_fig = px.bar(
-            df.groupby('make').sum().nlargest(10, 'sellingprice')[category],
-            x=category,
-            y='color',
-            title=f'Top 10 makes across {category} by sales volume'
+    def update_price_range_distribution(selected_make, price_range):
+        filtered_df = df[(df['make'] == selected_make) &
+                         (df['sellingprice'] >= price_range[0]) &
+                         (df['sellingprice'] <= price_range[1])]
+        fig = px.histogram(
+            filtered_df,
+            x='sellingprice',
+            nbins=30,
+            title=f'Price Distribution for {selected_make}'
         )
-        return top_10_makes_fig
+        fig.update_layout(
+            title={
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            },
+            xaxis=dict(
+                title='Price ($)',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            ),
+            yaxis=dict(
+                title='Count',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            )
+        )
+        return fig
 
+    @my_app.callback(
+        Output('mm-top-selling-makes-models', 'figure'),
+        [Input('mm-make-model-selector', 'value'),
+         Input('mm-top-n-slider', 'value')]
+    )
+    def update_top_selling(selection, top_n):
+        filtered_df = df[df[selection].isin(df[selection].value_counts().nlargest(top_n).index)]
+        counts = filtered_df.groupby([selection, 'transmission']).size().reset_index(name='counts')
+        fig = px.bar(counts, x=selection, y='counts', color='transmission',
+                     title=f'Top {top_n} Selling {selection.capitalize()}s by Transmission Mode')
+        fig.update_layout(
+            title={
+                'x':0.5,
+                'font' : dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            },
+            xaxis=dict(
+                title=selection.capitalize(),
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            ),
+            yaxis=dict(
+                title='Count',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            )
+        )
+        return fig
+
+    @my_app.callback(
+        Output('mm-avg-price-make-model', 'figure'),
+        Input('mm-make-dropdown', 'value')
+    )
+    def update_avg_price(selected_makes):
+        filtered_df = df[df['make'].isin(selected_makes)]
+        avg_prices = filtered_df.groupby('make')['sellingprice'].mean().sort_values(ascending=False)
+        fig = px.bar(x=avg_prices.index, y=avg_prices.values,
+                     title='Average Selling Price by Make')
+        fig.update_layout(
+            title={
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            },
+            xaxis=dict(
+                title='Make',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            ),
+            yaxis=dict(
+                title='Average Selling Price ($)',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            )
+        )
+        return fig
+
+    @my_app.callback(
+        Output('mm-body-type-distribution', 'figure'),
+        Input('mm-make-model-dropdown', 'value')
+    )
+    def update_body_type_distribution(selected_make):
+        filtered_df = df[df['make'] == selected_make]
+        body_type_counts = filtered_df['body'].value_counts()
+        fig = px.pie(values=body_type_counts.values, names=body_type_counts.index,
+                     title=f'Body Type Distribution for {selected_make}')
+        fig.update_layout(
+            title={
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            }
+        )
+        return fig
+
+    @my_app.callback(
+        Output('mm-price-vs-odometer', 'figure'),
+        Input('mm-make-model-scatter-dropdown', 'value')
+    )
+    def update_price_vs_odometer(selected_make):
+        filtered_df = df[df['make'] == selected_make]
+        fig = px.scatter(filtered_df, x='odometer', y='sellingprice',
+                         title=f'Price vs. Odometer Reading for {selected_make}')
+        fig.update_layout(
+            title={
+                'x': 0.5,
+                'font': dict(
+                    family="Serif",
+                    size=20,
+                    color='blue'
+                )
+            },
+            xaxis=dict(
+                title='Odometer Reading',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            ),
+            yaxis=dict(
+                title='Price ($)',
+                titlefont=dict(
+                    family="Serif",
+                    size=18,
+                    color="darkred"
+                )
+            )
+        )
+        return fig
+
+    @my_app.callback(
+        Output("submit-button", "n_clicks"),
+        Input("submit-button", "n_clicks"),
+        State("comments-textarea", "value"),
+        prevent_initial_call=True,
+    )
+    def print_comments(n_clicks, comments):
+        if n_clicks > 0:
+            print(comments)
 
     # =======================Update layout based on selected tab=======================
     @my_app.callback(
@@ -380,5 +848,15 @@ def create_dash_app():
             return market_trends_layout
         elif tab == 'insights':
             return insights_layout
+
+    @my_app.callback(
+        Output("download-data", "data"),
+        Input("download-button", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def generate_download(n_clicks):
+        csv_string = df.to_csv(index=False, encoding='utf-8')
+        csv_string = "data:text/csv;charset=utf-8," + urllib.parse.quote(csv_string)
+        return csv_string
 
     return my_app

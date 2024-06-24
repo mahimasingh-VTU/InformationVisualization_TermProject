@@ -16,8 +16,8 @@ class DataCleaner:
         self.df = self.df[self.df['odometer'] > 0]
 
         # Standardize data (e.g., make all text data lowercase)
-        self.df['make'] = self.df['make'].str.lower()
-        self.df['model'] = self.df['model'].str.lower()
+        self.df['make'] = self.df['make'].str.title()
+        self.df['model'] = self.df['model'].str.title()
         self.df['trim'] = self.df['trim'].str.lower()
         self.df['body'] = self.df['body'].str.lower()
         self.df['transmission'] = self.df['transmission'].str.lower()

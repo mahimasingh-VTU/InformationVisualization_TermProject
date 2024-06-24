@@ -23,6 +23,7 @@ def create_dash_app():
         html.Br(),
         dcc.Tabs(
             id='tabs',
+            value='overview',
             children=[
                 dcc.Tab(label='Overview', value='overview'),
                 dcc.Tab(label='Market Trends', value='market_trends'),
@@ -182,42 +183,31 @@ def create_dash_app():
         html.Header('Market Trends', style={'textAlign': 'center'}),
         html.Br(),
         html.Div([
-            # 1. __________________
+            # 1. __________________Top 10 highest prices by make
             dcc.Loading(
-                id="loading-average-price",
+                id="mt-loading-1",
                 type="circle",
-                children=dcc.Graph(id='average-price-graph')
-            ),
-            dcc.Dropdown(
-                id='category_dropdown',
-                options=[
-                    {'label': 'Condition', 'value': 'condition'},
-                    {'label': 'State', 'value': 'state'},
-                    {'label': 'Color', 'value': 'color'},
-                    {'label': 'Make', 'value': 'make'},
-                    {'label': 'Year', 'value': 'year'}
-                ],
-                value='condition'
-            ),
+                children=dcc.Graph(id='mt-top-10-highest-prices')
+            )
         ]),
         html.Br(),
         html.Div([
             # 2. Manufacturer distribution by state
             dcc.Loading(
-                id="loading-average-price",
+                id="mt-loading-2",
                 type="circle",
-                children=dcc.Graph(id='manufacturer-distribution-graph')
+                children=dcc.Graph(id='mt-manufacturer-distribution-graph')
             ),
         ]),
         html.Div([
             # 3. Make Market Share over the years
             dcc.Loading(
-                id="loading-average-price",
+                id="mt-loading-3",
                 type="circle",
-                children=dcc.Graph(id='market-share-graph'),
+                children=dcc.Graph(id='mt-market-share-graph'),
             ),
             dcc.RangeSlider(
-                id='year-slider',
+                id='mt-year-slider-1',
                 min=df['year'].min(),
                 max=df['year'].max(),
                 value=[df['year'].min(), df['year'].max()],
@@ -228,46 +218,57 @@ def create_dash_app():
         html.Br(),
         html.Div([
             # 4. Monthly sales trend by year - input year via slider
+            dcc.Loading(
+                id="mt-loading-4",
+                type="circle",
+                children=dcc.Graph(id='mt-monthly-sales-trend-graph')
+            ),
             dcc.Slider(
-                id='year-slider',
+                id='mt-year-slider-2',
                 min=df['year'].min(),
                 max=df['year'].max(),
                 value=df['year'].min(),
                 marks={str(year): str(year) for year in df['year'].unique()},
                 step=None
             ),
-            dcc.Graph(id='monthly-sales-trend-graph'),
         ]),
         html.Br(),
         html.Div([
             # 5. Average selling price of [body type] over the years - provide a dropdown to select the body type
             dcc.Loading(
-                id="loading-average-price",
+                id="mt-loading-5",
                 type="circle",
-                children=dcc.Graph(id='selling-price-body-type-graph')
+                children=dcc.Graph(id='mt-selling-price-body-type-graph')
             ),
             dcc.Dropdown(
-                id='body-type-dropdown',
+                id='mt-body-type-dropdown',
                 options=[{'label': body, 'value': body} for body in df['body'].unique()],
                 value='sedan'
             ),
         ])
     ])
 
-    # 1. ___________Average price by [condition,state,color,make,year] - radiobuttons to select the category_______
+    # 1. Top 10 highest prices by make
     @my_app.callback(
-        Output('average-price-graph', 'figure'),
-        [Input('category_dropdown', 'value')]
+        Output('mt-top-10-highest-prices', 'figure'),
+        [Input('tabs', 'value')]
     )
-    def update_tab2(category):
-        df['sellingprice'] = pd.to_numeric(df['sellingprice'], errors='coerce')
-        avg_price_fig = px.bar(df.groupby(category).mean()['sellingprice'],
-                               x=category, y='sellingprice', title=f'Average price by {category}')
-        return avg_price_fig
+    def update_top_10_highest_prices_graph(tab):
+        if tab == 'market_trends':
+            highest_prices = df.groupby('make')['sellingprice'].max().nlargest(10).reset_index()
+            fig = px.bar(
+                highest_prices,
+                x='make',
+                y='sellingprice',
+                title='Top 10 Highest Prices by Make',
+                labels={'sellingprice': 'Highest Price ($)', 'make': 'Make'},
+                height=400
+            )
+            return fig
 
     # 2. Manufacturer distribution by state
     @my_app.callback(
-        Output('manufacturer-distribution-graph', 'figure'),
+        Output('mt-manufacturer-distribution-graph', 'figure'),
         [Input('tabs', 'value')]
     )
     def update_manufacturer_distribution_graph(tab):
@@ -285,8 +286,8 @@ def create_dash_app():
             return fig
     # 3. Make Market Share over the years
     @my_app.callback(
-        Output('market-share-graph', 'figure'),
-        [Input('year-slider', 'value')]
+        Output('mt-market-share-graph', 'figure'),
+        [Input('mt-year-slider-1', 'value')]
     )
     def update_graph(year_range):
         df_filtered = df[(df['year'] >= year_range[0]) & (df['year'] <= year_range[1])]
@@ -304,8 +305,8 @@ def create_dash_app():
 
     # 4. Monthly sales trend by year - input year via slider
     @my_app.callback(
-        Output('monthly-sales-trend-graph', 'figure'),
-        [Input('year-slider', 'value')]
+        Output('mt-monthly-sales-trend-graph', 'figure'),
+        [Input('mt-year-slider-2', 'value')]
     )
     def update_monthly_sales_trend_graph(selected_year):
         df_filtered = df[df['year'] == selected_year]
@@ -319,8 +320,8 @@ def create_dash_app():
 
     # 5. Average selling price of [bodytype] over the years - provide a dropdown to select the body type
     @my_app.callback(
-        Output('selling-price-body-type-graph', 'figure'),
-        [Input('body-type-dropdown', 'value')]
+        Output('mt-selling-price-body-type-graph', 'figure'),
+        [Input('mt-body-type-dropdown', 'value')]
     )
     def update_selling_price_body_type_graph(selected_body_type):
         df_filtered = df[df['body'] == selected_body_type]
@@ -338,9 +339,8 @@ def create_dash_app():
     insights_layout = html.Div([
         html.Header('Car Insights', style={'textAlign': 'center'}),
         html.Br(),
-        # 1.
         html.Div([
-            html.H5('Top 10 makes by Sales volume'),
+            # 1. __________________Top 10 models by make - dropdown to select the make_______________
             dcc.Graph(id='top-10-makes-graph'),
         ]),
         dcc.RadioItems(

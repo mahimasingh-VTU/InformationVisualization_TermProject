@@ -11,13 +11,6 @@ from data_cleaner import DataCleaner
 
 df_raw = pd.read_csv('car_prices.csv')
 df = DataCleaner(df_raw).clean_data()
-print(df.info())
-print(df.head())
-"""
-Numerical features: ['year', 'condition', 'odometer', 'mmr', 'sellingprice']
-Categorical features: ['make', 'model', 'trim', 'body', 'transmission', 'state', 'color', 'interior', 'seller', 'saledate']
-"""
-
 
 def create_dash_app():
     external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']

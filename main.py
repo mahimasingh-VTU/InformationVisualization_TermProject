@@ -2,6 +2,7 @@ import pandas as pd
 from data_explorer import DataExplorer
 from data_cleaner import DataCleaner
 from plotter import Plotter
+from dash_app import create_dash_app
 
 if __name__ == "__main__":
 
@@ -56,6 +57,6 @@ if __name__ == "__main__":
     plotter.plot_swarm('year', 'sellingprice', 'Swarm Plot of Selling Prices by Year')
 
     # Create the Dash app
-    # my_app = create_dash_app()
-    # my_app.run_server(port=8050, host='0.0.0.0')
+    my_app = create_dash_app()
+    my_app.run_server(port=8050, host='0.0.0.0')
 

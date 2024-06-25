@@ -2,14 +2,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from scipy import stats
-
+import pandas as pd
+pd.set_option('display.float_format', '{:.2f}'.format)
 class Plotter:
     def __init__(self, df):
         self.df = df
 
     def plot_bar(self, x, y, title, xlabel, ylabel):
+        # Group by 'x' column, calculate count, and reset index to keep 'x' as a column
+        data = self.df.groupby(x)[y].count().reset_index()
+
         plt.figure(figsize=(10, 6))
-        self.df.groupby(x)[y].count().plot(kind='bar', color='skyblue')
+        # Use seaborn or matplotlib to plot, ensuring 'x' is used explicitly for the x-axis
+        sns.barplot(data=data, x=x, y=y, color='skyblue')  # Seaborn automatically handles categorical axes better
         plt.title(title, fontsize=15, fontfamily='serif', color='blue')
         plt.xlabel(xlabel, fontsize=12, fontfamily='serif', color='darkred')
         plt.ylabel(ylabel, fontsize=12, fontfamily='serif', color='darkred')
@@ -45,9 +50,51 @@ class Plotter:
         plt.grid(True)
         plt.show()
 
-    def plot_pie(self, column, title):
-        plt.figure(figsize=(8, 8))
-        self.df[column].value_counts().plot.pie(autopct='%1.1f%%', colors=sns.color_palette("pastel"))
+    def plot_bar_vis(self, x, y, title, xlabel, ylabel):
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x=self.df[x], y=self.df[y], palette='viridis')
+        plt.title(title, fontsize=20, fontfamily='serif', color='blue')
+        plt.xlabel(xlabel, fontsize=16, fontfamily='serif', color='darkred')
+        plt.ylabel(ylabel, fontsize=16, fontfamily='serif', color='darkred')
+        plt.xticks(rotation=45)
+        plt.show()
+
+
+
+    # def plot_heatmap(self):
+    #     plt.figure(figsize=(10, 8))
+    #     sns.heatmap(self.df.corr(), annot=True, cmap='coolwarm')
+    #     plt.title('Correlation Heatmap', fontsize=20, fontfamily='serif', color='blue')
+    #     plt.show()
+
+
+
+    def plot_count(self, column, title, xlabel, ylabel):
+        plt.figure(figsize=(12, 8))
+        sns.countplot(x=self.df[column], palette='viridis')
+        plt.title(title, fontsize=20, fontfamily='serif', color='blue')
+        plt.xlabel(xlabel, fontsize=16, fontfamily='serif', color='darkred')
+        plt.ylabel(ylabel, fontsize=16, fontfamily='serif', color='darkred')
+        plt.xticks(rotation=90)
+        plt.show()
+
+    def plot_reg(self, x, y, title, xlabel, ylabel):
+        plt.figure(figsize=(12, 6))
+        sns.regplot(x=self.df[x], y=self.df[y], marker='o', color=".3", line_kws=dict(color="r"))
+        plt.title(title, fontsize=20, fontfamily='serif', color='blue')
+        plt.xlabel(xlabel, fontsize=16, fontfamily='serif', color='darkred')
+        plt.ylabel(ylabel, fontsize=16, fontfamily='serif', color='darkred')
+        plt.show()
+    def plot_pie(self, column, title, threshold=0.007):
+        # Calculate counts and create a new Series for plotting
+        counts = self.df[column].value_counts(normalize=True)
+        # Combine small categories into "Other"
+        small_categories = counts[counts < threshold].sum()
+        counts = counts[counts >= threshold]
+        counts['Other'] = small_categories
+
+        plt.figure(figsize=(12, 12))
+        counts.plot.pie(autopct='%1.1f%%', colors=sns.color_palette("pastel"))
         plt.title(title, fontsize=15, fontfamily='serif', color='blue')
         plt.ylabel('')
         plt.show()

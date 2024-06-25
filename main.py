@@ -1,61 +1,117 @@
 import pandas as pd
 from data_explorer import DataExplorer
 from data_cleaner import DataCleaner
+from data_preprocessing import DataProcessor
 from plotter import Plotter
+import matplotlib.pyplot as plt
+
+pd.set_option('display.float_format', '{:.2f}'.format)
+
+
+def plot_initial_histograms(dataframe):
+    columns_to_plot = ['sellingprice', 'odometer', 'condition', 'year']  # Add or remove columns as needed
+    for column in columns_to_plot:
+        if column in dataframe.columns:
+            plt.figure(figsize=(10, 6))
+            dataframe[column].hist(bins=20, color='gray', alpha=0.7)
+            plt.title(f'Initial Distribution of {column.capitalize()}')
+            plt.xlabel(column.capitalize())
+            plt.ylabel('Frequency')
+            plt.grid(True)
+            plt.show()
+
 
 if __name__ == "__main__":
-
     # Load the data
     file_path = 'car_prices.csv'
     df = pd.read_csv(file_path)
+    # Print basic data info
+    print(df.head())
+    print(df.shape)
+    print(df.columns)
+    print(df.describe().T)
+    print(df.describe(exclude='number').T)
+    print("Missing values:", df.isnull().sum() / df.count() * 100)
 
+    # Call the function to plot histograms
+    plot_initial_histograms(df)
     # Data cleaning
     cleaner = DataCleaner(df)
     df_clean = cleaner.clean_data()
     # Verify the cleaning process
     print(df_clean.info())
     print(df_clean.head())
+    # PCA
+    processor = DataProcessor(df_clean)
+    principal_components, n_components_95, variance_explained = processor.perform_pca()
 
-    # Create instance of the Plotter with cleaned data
-    plotter = Plotter(df_clean)
-    # Data exploration
-    explorer = DataExplorer(df_clean)
-    explorer.explore_data()
-    explorer.plot_histograms()
+    print(f"Number of components to explain 95% of the variance: {n_components_95}")
+    print(f"Cumulative explained variance by {n_components_95} components: {variance_explained * 100:.2f}%")
 
-    # Generate plots
-    plotter.plot_bar('year', 'make', 'Vehicle Sales by Year', 'Year', 'Sales Volume')
-    plotter.plot_histogram('condition', 'Vehicle Condition Distribution')
-    plotter.plot_scatter('sellingprice', 'mmr', 'Selling Price vs MMR', 'Selling Price', 'MMR')
-    plotter.plot_pie('make', 'Distribution of Vehicle Makes')
-    plotter.plot_count('model', 'Count of Vehicle Models', 'Model', 'Count')
-    plotter.subplot_story()
+    # Perform normality test on PCA results
+    normality_results = processor.normality_test(principal_components)
+    print("Shapiro-Wilk Normality Test Results:")
+    for component, result in normality_results.items():
+        print(
+            f"{component}: Statistic = {result['Statistic']:.4f}, p-value = {result['p-value']:.4f}, Normal = {result['Normal']}")
 
-    # Additional plots
-    plotter.plot_line('year', 'sellingprice', 'Average Selling Price by Year', 'Year', 'Average Selling Price')
-    plotter.plot_dist('sellingprice', 'Selling Price Distribution')
-    plotter.plot_pair(columns=['sellingprice', 'mmr', 'odometer'], title='Pair Plot of Selling Price, MMR, and Odometer')
-    plotter.plot_heatmap('Correlation Heatmap')
-    plotter.plot_hist_kde('odometer', 'Odometer Distribution with KDE')
-    plotter.plot_qq('sellingprice', 'QQ Plot of Selling Price')
-    plotter.plot_kde('mmr', 'KDE Plot of MMR')
-    plotter.plot_im_reg('sellingprice', 'odometer', 'Selling Price vs Odometer with Regression Line')
-    plotter.plot_box('condition', 'sellingprice', None, 'Box Plot of Selling Price by Condition')
+    # Perform Ksquare normality test on PCA results
+    normality_results = processor.normality_test(principal_components)
+    print("Ksquare Normality Test Results:")
+    for component, result in normality_results.items():
+        print(
+            f"{component}: Statistic = {result['Statistic']:.4f}, p-value = {result['p-value']:.4f}, Normal = {result['Normal']}")
 
+    #
+    # # Create instance of the Plotter with cleaned data
+    # plotter = Plotter(df_clean)
+    # # Data exploration
+    # explorer = DataExplorer(df_clean)
+    # explorer.explore_data()
+    # explorer.plot_histograms()
+    #
+    # # Generate plots
+    # # Generate various plots
+    # plotter.plot_bar_vis('make', 'sellingprice', 'Brands vs Selling Price by Transmission', 'Brands', 'Selling Price')
+    # plotter.plot_scatter('sellingprice', 'mmr', 'Selling Price vs MMR', 'Selling Price', 'MMR')
+    # plotter.plot_heatmap()
+    # plotter.plot_line('year', 'sellingprice', 'Manufacturing Year vs Selling Price', 'Manufacturing Year',
+    #                   'Selling Price')
+    # #plotter.plot_box('year', 'Distribution of Manufacturing Years')
+    # plotter.plot_histogram('mmr', 'Manheim Market Report (MMR) Distribution')
+    # plotter.plot_count('state', 'Distribution by State', 'State', 'Count')
+    # plotter.plot_reg('sellingprice', 'mmr', 'Regression: Selling Price vs MMR', 'Selling Price', 'MMR')
+    #
+    # plotter.plot_histogram('condition', 'Vehicle Condition Distribution')
+    #
+    # plotter.plot_pie('make', 'Distribution of Vehicle Makes')
+    # plotter.plot_count('model', 'Count of Vehicle Models', 'Model', 'Count')
+    # plotter.subplot_story()
 
-    # New plot calls for the additional plots
-    plotter.plot_stacked_bar('year', 'condition', 'Vehicle Sales by Condition and Year', 'Year', 'Count')
-    plotter.plot_area('year', 'sellingprice', 'Area Plot of Selling Prices Over Years')
-    plotter.plot_violin('year', 'sellingprice', 'Violin Plot of Selling Prices by Year')
-    plotter.plot_joint_kde_scatter('sellingprice', 'mmr', 'Joint KDE and Scatter Plot of Selling Price vs MMR')
-    plotter.plot_rug('sellingprice', 'Rug Plot of Selling Prices')
-    plotter.plot_3d_scatter('year', 'sellingprice', 'mmr', '3D Scatter Plot of Year, Selling Price and MMR')
-    plotter.plot_cluster_map()
-    plotter.plot_hexbin('sellingprice', 'mmr', 'Hexbin Plot of Selling Price vs MMR')
-    plotter.plot_strip('condition', 'sellingprice', 'Strip Plot of Selling Price by Condition')
-    plotter.plot_swarm('year', 'sellingprice', 'Swarm Plot of Selling Prices by Year')
+    # # Additional plots
+    # plotter.plot_line('year', 'sellingprice', 'Average Selling Price by Year', 'Year', 'Average Selling Price')
+    # plotter.plot_dist('sellingprice', 'Selling Price Distribution')
+    # plotter.plot_pair(columns=['sellingprice', 'mmr', 'odometer'], title='Pair Plot of Selling Price, MMR, and Odometer')
+    # plotter.plot_heatmap('Correlation Heatmap')
+    # plotter.plot_hist_kde('odometer', 'Odometer Distribution with KDE')
+    # plotter.plot_qq('sellingprice', 'QQ Plot of Selling Price')
+    # plotter.plot_kde('mmr', 'KDE Plot of MMR')
+    # plotter.plot_im_reg('sellingprice', 'odometer', 'Selling Price vs Odometer with Regression Line')
+# plotter.plot_box('condition', 'sellingprice', None, 'Box Plot of Selling Price by Condition')
 
-    # Create the Dash app
-    # my_app = create_dash_app()
-    # my_app.run_server(port=8050, host='0.0.0.0')
+#
+# # New plot calls for the additional plots
+# plotter.plot_stacked_bar('year', 'condition', 'Vehicle Sales by Condition and Year', 'Year', 'Count')
+# plotter.plot_area('year', 'sellingprice', 'Area Plot of Selling Prices Over Years')
+# plotter.plot_violin('year', 'sellingprice', 'Violin Plot of Selling Prices by Year')
+# plotter.plot_joint_kde_scatter('sellingprice', 'mmr', 'Joint KDE and Scatter Plot of Selling Price vs MMR')
+# plotter.plot_rug('sellingprice', 'Rug Plot of Selling Prices')
+# plotter.plot_3d_scatter('year', 'sellingprice', 'mmr', '3D Scatter Plot of Year, Selling Price and MMR')
+# plotter.plot_cluster_map()
+# plotter.plot_hexbin('sellingprice', 'mmr', 'Hexbin Plot of Selling Price vs MMR')
+# plotter.plot_strip('condition', 'sellingprice', 'Strip Plot of Selling Price by Condition')
+# plotter.plot_swarm('year', 'sellingprice', 'Swarm Plot of Selling Prices by Year')
 
+# Create the Dash app
+# my_app = create_dash_app()
+# my_app.run_server(port=8050, host='0.0.0.0')

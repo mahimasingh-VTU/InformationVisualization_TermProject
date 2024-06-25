@@ -1,24 +1,33 @@
 import pandas as pd
-
+from prettytable import PrettyTable
+pd.set_option('display.float_format', '{:.2f}'.format)
 class DataCleaner:
     def __init__(self, df):
         self.df = df
 
+    def print_info(self):
+            info_table = PrettyTable()
+            info_table.field_names = ["Index", "Column", "Non-Null Count", "Dtype"]
+            for idx, (col, non_null_count, dtype) in enumerate(zip(self.df.columns, self.df.count(), self.df.dtypes)):
+                    info_table.add_row([idx, col, non_null_count, dtype])
+            print(info_table)
+
+
+       
+
     def clean_data(self):
-        # Handle missing values
-        self.df = self.df.dropna(subset=['make','trim','body','interior','transmission','color', 'model', 'sellingprice', 'mmr', 'condition', 'odometer'])
+        self.df['transmission'].fillna('automatic', inplace=True)
+        self.df.dropna(axis=0, inplace=True)
+        self.df['year'] = pd.to_datetime(self.df['year'], format='%Y').dt.year
+        condition_mapping = {range(10, 21): 1, range(20, 31): 2, range(30, 41): 3, range(40, 51): 4}
+        for k, v in condition_mapping.items():
+            self.df['condition'].replace(k, v, inplace=True)
 
-        # Remove unnecessary columns
-        self.df = self.df.drop(columns=['vin'])
 
-        # Remove duplicates
-        self.df = self.df.drop_duplicates()
+        self.df['color'].replace('—', 'multicolor', inplace=True)
+        self.df['interior'].replace('—', 'multicolor', inplace=True)
+        self.df['body'] = self.df['body'].str.lower()
 
-        # Fix incorrect data (e.g., unrealistic values for condition)
-        self.df = self.df[(self.df['condition'] > 0) & (self.df['condition'] <= 5)]
-        self.df = self.df[self.df['odometer'] > 0]
-
-        # Standardize data (e.g., make all text data lowercase)
         self.df['make'] = self.df['make'].str.title()
         self.df['model'] = self.df['model'].str.title()
         self.df['trim'] = self.df['trim'].str.lower()
@@ -38,6 +47,12 @@ class DataCleaner:
 
         # Convert date columns to datetime
         self.df['saledate'] = pd.to_datetime(self.df['saledate'], utc=True, format='mixed').dt.date
+        
+         # Remove unnecessary columns
+        self.df = self.df.drop(columns=['vin'])
+
+        # Remove duplicates
+        self.df = self.df.drop_duplicates()
 
         # Clean the body column
         self.df['body'] = self.df['body'].str.replace(r'.*sedan.*', 'sedan', regex=True)

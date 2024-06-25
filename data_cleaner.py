@@ -1,19 +1,26 @@
 import pandas as pd
-
+pd.set_option('display.float_format', '{:.2f}'.format)
 class DataCleaner:
     def __init__(self, df):
         self.df = df
 
     def clean_data(self):
-        # Handle missing values
-        self.df = self.df.dropna(subset=['make','trim','body','interior','transmission','color', 'model', 'sellingprice', 'mmr', 'condition', 'odometer'])
+        # Filling missing values
+        self.df['transmission'].fillna('automatic', inplace=True)
+        self.df.dropna(axis=0, inplace=True)
 
-        # Remove duplicates
-        self.df = self.df.drop_duplicates()
+        # Convert 'year' to datetime and extract the year
+        self.df['year'] = pd.to_datetime(self.df['year'], format='%Y').dt.year
 
-        # Fix incorrect data (e.g., unrealistic values for condition)
-        self.df = self.df[(self.df['condition'] > 0) & (self.df['condition'] <= 5)]
-        self.df = self.df[self.df['odometer'] > 0]
+        # Replace conditions with mapped values
+        condition_mapping = {range(10, 21): 1, range(20, 31): 2, range(30, 41): 3, range(40, 51): 4}
+        for k, v in condition_mapping.items():
+            self.df['condition'].replace(k, v, inplace=True)
+
+        # Handling categorical data
+        self.df['color'].replace('—', 'multicolor', inplace=True)
+        self.df['interior'].replace('—', 'multicolor', inplace=True)
+        self.df['body'] = self.df['body'].str.lower()
 
         # Standardize data (e.g., make all text data lowercase)
         self.df['make'] = self.df['make'].str.title()

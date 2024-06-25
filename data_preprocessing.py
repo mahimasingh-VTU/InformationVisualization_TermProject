@@ -1,10 +1,12 @@
-import pandas as pd
+
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import shapiro, anderson
+from prettytable import PrettyTable
+from scipy.stats import normaltest
 
 class DataProcessor:
     def __init__(self, df):
@@ -52,15 +54,24 @@ class DataProcessor:
         return principal_components, n_components_95, cumulative_variance[n_components_95-1]
 
     def normality_test(self, data):
+        results_table = PrettyTable()
+        results_table.field_names = ["Component", "Statistic", "p-value", "Normal"]
         results = {}
         for i, component in enumerate(data.T):  # Test each principal component
             stat, p = shapiro(component)
-            results[f'Component {i + 1}'] = {'Statistic': stat, 'p-value': p, 'Normal': p > 0.05}
-        return results
+            normal = p > 0.05
+            results_table.add_row([f'Component {i + 1}', stat, p, normal])
+            results[f'Component {i + 1}'] = {'Statistic': stat, 'p-value': p, 'Normal': normal}
+        print(results_table)
+
 
     def normality_test_Ksquare(self, data):
+        results_table = PrettyTable()
+        results_table.field_names = ["Component", "Statistic", "p-value", "Normal"]
         results = {}
-        for i, component in enumerate(data.T):  # Test each principal component
-            stat, p = normaltest(component)
-            results[f'Component {i + 1}'] = {'Statistic': stat, 'p-value': p, 'Normal': p > 0.05}
-        return results
+        for i, component in enumerate(data.columns):
+            stat, p = normaltest(data[component])
+            normal = p > 0.05
+            results_table.add_row([component, stat, p, normal])
+            results[component] = {'Statistic': stat, 'p-value': p, 'Normal': normal}
+        print(results_table)

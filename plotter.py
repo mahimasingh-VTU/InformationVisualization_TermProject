@@ -170,16 +170,28 @@ class Plotter:
         plt.show()
 
     def plot_heatmap(self, title='Correlation Heatmap'):
-        plt.figure(figsize=(10, 8))
+        plt.figure(figsize=(14, 12))  # Increase figure size
         # Select only numeric columns and drop any rows with NaN values
         numeric_df = self.df.select_dtypes(include=[np.number]).dropna()
         if numeric_df.empty:
             print("No numeric data available for heatmap.")
             return
+
         corr = numeric_df.corr()
-        sns.heatmap(corr, annot=True, cmap='coolwarm', cbar=True)
-        plt.title(title, fontsize=15, fontfamily='serif', color='blue')
-        plt.grid(True)
+
+        # Verify the column names
+        print("Columns for Heatmap:")
+        print(corr.columns)
+
+        sns.heatmap(corr, annot=True, cmap='coolwarm', cbar=True,
+                    xticklabels=corr.columns, yticklabels=corr.columns)
+
+        plt.title(title, fontsize=20, fontfamily='serif', color='blue')
+        plt.xlabel('Features', fontsize=15, fontfamily='serif', color='darkred')
+        plt.ylabel('Features', fontsize=15, fontfamily='serif', color='darkred')
+        plt.xticks(rotation=45, ha='right', fontsize=12)  # Increase font size for x-ticks
+        plt.yticks(rotation=0, fontsize=12)  # Increase font size for y-ticks
+        plt.tight_layout()  # Adjust layout to fit everything nicely
         plt.show()
 
     def plot_hist_kde(self, column, title=None):

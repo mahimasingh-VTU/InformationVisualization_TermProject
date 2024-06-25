@@ -48,8 +48,13 @@ class DataProcessor:
 
         # Optionally, visualize the correlation matrix of the principal components
         plt.figure(figsize=(8, 6))
-        sns.heatmap(np.corrcoef(principal_components.T), annot=True, cmap='coolwarm', fmt=".2f")
+        corr_matrix = np.corrcoef(principal_components.T)
+        sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f",
+                    xticklabels=[f'PC{i + 1}' for i in range(corr_matrix.shape[0])],
+                    yticklabels=[f'PC{i + 1}' for i in range(corr_matrix.shape[0])])
         plt.title("Correlation Matrix of PCA Components")
+        plt.xticks(rotation=45, ha='right')
+        plt.yticks(rotation=0)
         plt.show()
 
         return principal_components, n_components_95, cumulative_variance[n_components_95-1]

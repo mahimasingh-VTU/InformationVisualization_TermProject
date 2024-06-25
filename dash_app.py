@@ -38,7 +38,9 @@ def create_dash_app():
             children=[
                 dcc.Tab(label='Overview', value='overview'),
                 dcc.Tab(label='Market Trends', value='market_trends'),
-                dcc.Tab(label='Make and Model Insights', value='insights')
+                dcc.Tab(label='Make and Model Insights', value='insights'),
+                dcc.Tab(label='Static graphs',value='static-graphs'),
+                dcc.Tab(label='User Feedback', value='feedback')
             ]
         ),
         html.Div(id='layout'),
@@ -638,17 +640,6 @@ def create_dash_app():
                 value=df['make'].unique()[0]
             )
         ]),
-        html.Br(),
-        html.Div([
-            # 6. _______________User comments_______________
-            html.Label('Your feedback is valuable to us:', htmlFor='comments-textarea'),
-            dcc.Textarea(
-                id='comments-textarea',
-                placeholder='Enter your comments here...',
-                style={'width': '100%', 'height': 100},
-            ),
-            html.Button('Submit', id='submit-button'),
-        ]),
     ])
 
     @my_app.callback(
@@ -826,6 +817,26 @@ def create_dash_app():
         )
         return fig
 
+
+
+    # ======================Static graphs tab layout===============================
+    static_graphs_layout = html.Div([
+
+    ])
+
+    # =======================Feedback tab layout=======================
+    feedback_layout = html.Div([
+        html.Br(),
+        html.Div([
+            html.Label('Your feedback is valuable to us:', htmlFor='comments-textarea'),
+            dcc.Textarea(
+                id='comments-textarea',
+                placeholder='Enter your comments here...',
+                style={'width': '100%', 'height': 100},
+            ),
+            html.Button('Submit', id='submit-button'),
+        ]),
+    ])
     @my_app.callback(
         Output("submit-button", "n_clicks"),
         Input("submit-button", "n_clicks"),
@@ -833,8 +844,9 @@ def create_dash_app():
         prevent_initial_call=True,
     )
     def print_comments(n_clicks, comments):
+        commentslist = []
         if n_clicks > 0:
-            print(comments)
+            commentslist.append(comments)
 
     # =======================Update layout based on selected tab=======================
     @my_app.callback(
@@ -848,6 +860,10 @@ def create_dash_app():
             return market_trends_layout
         elif tab == 'insights':
             return insights_layout
+        elif tab == 'static-graphs':
+            return static_graphs_layout
+        elif tab == 'feedback':
+            return feedback_layout
 
     @my_app.callback(
         Output("download-data", "data"),

@@ -4,7 +4,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.stats import shapiro, anderson
+from scipy.stats import shapiro, anderson, normaltest
+
 from prettytable import PrettyTable
 from scipy.stats import normaltest
 

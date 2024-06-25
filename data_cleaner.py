@@ -12,6 +12,9 @@ class DataCleaner:
                     info_table.add_row([idx, col, non_null_count, dtype])
             print(info_table)
 
+
+       
+
     def clean_data(self):
         self.df['transmission'].fillna('automatic', inplace=True)
         self.df.dropna(axis=0, inplace=True)
@@ -19,6 +22,7 @@ class DataCleaner:
         condition_mapping = {range(10, 21): 1, range(20, 31): 2, range(30, 41): 3, range(40, 51): 4}
         for k, v in condition_mapping.items():
             self.df['condition'].replace(k, v, inplace=True)
+
 
         self.df['color'].replace('—', 'multicolor', inplace=True)
         self.df['interior'].replace('—', 'multicolor', inplace=True)
@@ -31,7 +35,34 @@ class DataCleaner:
         self.df['transmission'] = self.df['transmission'].str.lower()
         self.df['color'] = self.df['color'].str.lower()
         self.df['interior'] = self.df['interior'].str.lower()
-        self.df['state'] = self.df['state'].str.lower()
+        self.df['state'] = self.df['state'].str.upper()
         self.df['seller'] = self.df['seller'].str.lower()
+
+        # Remove odometer outliers
+        self.df = self.df[self.df['odometer'] < 500000]
+
+        # Remove rows with unrealistic values
+        self.df = self.df[self.df['color'] != '—']
+        self.df = self.df[self.df['interior'] != '—']
+
+        # Convert date columns to datetime
+        self.df['saledate'] = pd.to_datetime(self.df['saledate'], utc=True, format='mixed').dt.date
+        
+         # Remove unnecessary columns
+        self.df = self.df.drop(columns=['vin'])
+
+        # Remove duplicates
+        self.df = self.df.drop_duplicates()
+
+        # Clean the body column
+        self.df['body'] = self.df['body'].str.replace(r'.*sedan.*', 'sedan', regex=True)
+        self.df['body'] = self.df['body'].str.replace(r'.*convertible.*', 'convertible', regex=True)
+        self.df['body'] = self.df['body'].str.replace(r'.*coupe.*', 'coupe', regex=True)
+        self.df['body'] = self.df['body'].str.replace(r'.*van.*', 'van', regex=True)
+        self.df['body'] = self.df['body'].str.replace(r'.*cab.*', 'pickup', regex=True)
+        self.df['body'] = self.df['body'].str.replace(r'.*wagon.*', 'wagon', regex=True)
+        self.df['body'] = self.df['body'].str.replace(r'.*supercrew.*', 'van', regex=True)
+        self.df['body'] = self.df['body'].str.replace('koup', 'coupe')
+
 
         return self.df

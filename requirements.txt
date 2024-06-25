@@ -1,5 +1,14 @@
 dash
-flask
-pandas
+Flask
+Flask-Compress
+itsdangerous
+Jinja2
+matplotlib
 numpy
+packaging
+pandas
+patsy
+pipreqs
 plotly
+scipy
+seaborn

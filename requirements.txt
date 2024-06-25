@@ -11,4 +11,4 @@ patsy
 pipreqs
 plotly
 scipy
-urllib
+seaborn

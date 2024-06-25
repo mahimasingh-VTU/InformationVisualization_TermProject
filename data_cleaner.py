@@ -8,6 +8,9 @@ class DataCleaner:
         # Handle missing values
         self.df = self.df.dropna(subset=['make','trim','body','interior','transmission','color', 'model', 'sellingprice', 'mmr', 'condition', 'odometer'])
 
+        # Remove unnecessary columns
+        self.df = self.df.drop(columns=['vin'])
+
         # Remove duplicates
         self.df = self.df.drop_duplicates()
 

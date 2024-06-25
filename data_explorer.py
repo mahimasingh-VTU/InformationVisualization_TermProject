@@ -1,6 +1,7 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 class DataExplorer:
     def __init__(self, df):
         self.df = df
@@ -21,4 +22,10 @@ class DataExplorer:
         numeric_cols = self.df.select_dtypes(include=['number']).columns
         self.df[numeric_cols].hist(bins=15, figsize=(15, 6), layout=(2, 4), color='skyblue')
         plt.tight_layout()
+        plt.show()
+
+    def plot_correration(self):
+        plt.figure(figsize=(10, 6))
+        sns.heatmap(self.df.corr(), annot=True, cmap='coolwarm')
+        plt.title('Correlation Heatmap')
         plt.show()

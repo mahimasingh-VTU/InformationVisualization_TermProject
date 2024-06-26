@@ -59,7 +59,13 @@ class Plotter:
         plt.xticks(rotation=45)
         plt.show()
 
-
+    def plot_boxen(self, x, y, title):
+        plt.figure(figsize=(12, 8))
+        sns.boxenplot(x=self.df[x], y=self.df[y])
+        plt.title(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.xlabel(x, fontsize=12, fontfamily='serif', color='darkred')
+        plt.ylabel(y, fontsize=12, fontfamily='serif', color='darkred')
+        plt.show()
     def plot_count(self, column, title, xlabel, ylabel):
         plt.figure(figsize=(12, 8))
         sns.countplot(x=self.df[column], palette='viridis')
@@ -68,6 +74,7 @@ class Plotter:
         plt.ylabel(ylabel, fontsize=16, fontfamily='serif', color='darkred')
         plt.xticks(rotation=90)
         plt.show()
+
 
     def plot_reg(self, x, y, title, xlabel, ylabel):
         plt.figure(figsize=(12, 6))
@@ -90,14 +97,15 @@ class Plotter:
         plt.ylabel('')
         plt.show()
 
-    def plot_count(self, column, title, xlabel, ylabel):
-        plt.figure(figsize=(10, 6))
-        self.df.groupby('year')['make'].count().plot(kind='bar')
-        plt.title('Vehicle Sales by Year')
-        plt.xlabel('Year')
-        plt.ylabel('Sales Volume')
-        plt.xticks(rotation=45)
+    def plot_grouped_bar(self, x, y, hue, title):
+        plt.figure(figsize=(12, 8))
+        sns.barplot(data=self.df, x=x, y=y, hue=hue)
+        plt.title(title, fontsize=15, fontfamily='serif', color='blue')
+        plt.xlabel(x, fontsize=12, fontfamily='serif', color='darkred')
+        plt.ylabel(y, fontsize=12, fontfamily='serif', color='darkred')
+        plt.legend(title=hue)
         plt.show()
+
 
         """
         2. Top 10 vehicle makes

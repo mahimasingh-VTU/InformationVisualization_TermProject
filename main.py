@@ -128,7 +128,7 @@ if __name__ == "__main__":
                       'Selling Price')
     # plotter.plot_box('year', 'Distribution of Manufacturing Years')
     plotter.plot_histogram('mmr', 'Manheim Market Report (MMR) Distribution')
-    plotter.plot_count('state', 'Distribution by State', 'State', 'Count')
+    plotter.plot_count('state', 'Count of Distribution by State', 'State', 'Count')
     plotter.plot_reg('sellingprice', 'mmr', 'Regression: Selling Price vs MMR', 'Selling Price', 'MMR')
 
     plotter.plot_histogram('condition', 'Vehicle Condition Distribution')
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     plotter.plot_pair(columns=['sellingprice', 'mmr', 'odometer'],
                       title='Pair Plot of Selling Price, MMR, and Odometer')
     plotter.plot_heatmap('Correlation Heatmap')
-    # plotter.plot_hist_kde('odometer', 'Odometer Distribution with KDE')
+    plotter.plot_hist_kde('odometer', 'Odometer Distribution with KDE')
     plotter.plot_qq('sellingprice', 'QQ Plot of Selling Price')
     plotter.plot_kde('mmr', 'KDE Plot of MMR')
     plotter.plot_im_reg('sellingprice', 'odometer', 'Selling Price vs Odometer with Regression Line')
@@ -155,11 +155,15 @@ if __name__ == "__main__":
     plotter.plot_joint_kde_scatter('sellingprice', 'mmr', 'Joint KDE and Scatter Plot of Selling Price vs MMR')
     plotter.plot_rug('sellingprice', 'Rug Plot of Selling Prices')
     plotter.plot_3d_scatter('year', 'sellingprice', 'mmr', '3D Scatter Plot of Year, Selling Price and MMR')
-    plotter.plot_cluster_map()
+
     plotter.plot_hexbin('sellingprice', 'mmr', 'Hexbin Plot of Selling Price vs MMR')
     plotter.plot_strip('condition', 'sellingprice', 'Strip Plot of Selling Price by Condition')
     plotter.plot_swarm('year', 'sellingprice', 'Swarm Plot of Selling Prices by Year')
+    print("Grouped Bar Plot")
+    plotter.plot_grouped_bar('make', 'sellingprice', 'year', 'Sales Price by Make and Year')
 
+    print("Boxen Plot")
+    plotter.plot_boxen('year', 'sellingprice', 'Boxen Plot of Selling Prices by Year')
 
     #Create the Dash app
     my_app = create_dash_app()

@@ -314,35 +314,13 @@ plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
-# TODO - change
+# Pick from Mahima's code
 # 23.========= Rug Plot: Distribution of Individual Data Points for MMR Values =========
-plt.figure(figsize=(10, 6))
-sns.rugplot(data=df, x='mmr', height=0.5)
-plt.title('Distribution of Individual Data Points for MMR Values', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('MMR', fontsize=15, fontfamily='serif', color='darkred')
-plt.grid(True)
-plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.show()
-#plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\23_distribution_mmr_values.png')
+
 
 # TODO - change
 # 24.========= Boxen Plot: Selling Prices Across Different States (Top 10 States by Sales Volume) =========
-sales_volume = df.groupby('state')['sellingprice'].sum()
-top_10_states = sales_volume.nlargest(10).index
-df_top_10_states = df[df['state'].isin(top_10_states)]
-plt.figure(figsize=(15, 8))
-sns.boxenplot(x='state', y='sellingprice', data=df_top_10_states, palette='coolwarm')
-plt.title('Selling Prices Across Different States (Top 10 States by Sales Volume)', fontsize=20, fontfamily='serif',
-          color='blue')
-plt.xlabel('State', fontsize=15, fontfamily='serif', color='darkred')
-plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
-plt.grid(True)
-plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.show()
-plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\24_selling_prices_states.png')
+
 
 # ---------------------------SUBPLOTS-----------------------------------
 

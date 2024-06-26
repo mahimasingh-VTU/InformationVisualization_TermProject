@@ -16,7 +16,11 @@ class DataCleaner:
 
     def clean_data(self):
         self.df['transmission'].fillna('automatic', inplace=True)
+        self.df.drop('vin', axis=1, inplace=True)
+        self.df.drop('trim', axis=1, inplace=True)
+        self.df.drop('seller', axis=1, inplace=True)
         self.df.dropna(axis=0, inplace=True)
+
         self.df['year'] = pd.to_datetime(self.df['year'], format='%Y').dt.year
         self.df['saledate'] = pd.to_datetime(self.df['saledate'], utc=True, format='mixed').dt.date # new format - yyyy-mm-dd
         self.df['saleyear'] = pd.to_datetime(self.df['saledate'], format='%Y').dt.year

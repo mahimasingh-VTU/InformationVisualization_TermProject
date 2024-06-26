@@ -54,9 +54,11 @@ def plot_initial_histograms(dataframe):
 
 
 if __name__ == "__main__":
+
     # Load the data
     file_path = 'car_prices.csv'
     df = pd.read_csv(file_path)
+
     #Print basic data info
     print("Basic Data Info")
     table_info = PrettyTable()

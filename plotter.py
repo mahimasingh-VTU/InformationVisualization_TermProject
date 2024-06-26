@@ -177,8 +177,8 @@ class Plotter:
 
     def plot_heatmap(self, title='Correlation Heatmap'):
         plt.figure(figsize=(14, 12))  # Increase figure size
-        # Select only numeric columns and drop any rows with NaN values
-        numeric_df = self.df.select_dtypes(include=[np.number]).dropna()
+        features = ['sellingprice', 'mmr', 'odometer', 'condition', 'year']
+        numeric_df = self.df[features].dropna()
         if numeric_df.empty:
             print("No numeric data available for heatmap.")
             return

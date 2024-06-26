@@ -38,18 +38,6 @@ class DataExplorer:
         for column in self.df.columns:
             missing_table.add_row([column, self.df[column].isnull().sum()])
         print(missing_table)
-
-        # print("Data Shape:", self.df.shape)
-        # print("Data Info:")
-        # print(self.df.info())
-        # print("Data Description:")
-        # print(self.df.describe())
-        # print("Unique Values per Column:")
-        # for column in self.df.columns:
-        #     print(f"{column} : {self.df[column].nunique()} unique values")
-        # print("Missing Values per Column:")
-        # print(self.df.isnull().sum())
-
     def plot_histograms(self):
 
         relevant_cols = ['sellingprice', 'condition', 'mmr', 'year']

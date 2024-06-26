@@ -5,11 +5,30 @@ from data_preprocessing import DataProcessor
 from plotter import Plotter
 import matplotlib.pyplot as plt
 from prettytable import PrettyTable
+import numpy as np
 from dash_app import create_dash_app
 
 pd.set_option('display.float_format', '{:.2f}'.format)
 
+def plot_box_plots(df, title):
+    numeric_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+    num_cols = len(numeric_columns)
+    num_rows = (num_cols + 2) // 3  # Create a grid with 3 columns
 
+    fig, axes = plt.subplots(num_rows, 3, figsize=(18, 5 * num_rows))
+    axes = axes.flatten()
+
+    for i, column in enumerate(numeric_columns):
+        ax = axes[i]
+        df.boxplot(column=column, ax=ax)
+        ax.set_title(f'Box Plot of {column.capitalize()} ({title})')
+
+    # Hide any unused subplots
+    for j in range(i + 1, len(axes)):
+        axes[j].axis('off')
+
+    plt.tight_layout()
+    plt.show()
 def print_pretty_table(title, data):
     table = PrettyTable()
     table.field_names = data.columns.tolist()
@@ -66,22 +85,37 @@ if __name__ == "__main__":
     print(df_clean.info())
     print("Head of Cleaned DataFrame")
     print_dataframe_in_one_line(df_clean.head())
+    # Plot box plots before removing outliers
+    print("Box Plots Before Removing Outliers")
+    plot_box_plots(df_clean, "Before Removing Outliers")
+
+    # Outlier detection and removal
+    df_no_outliers = cleaner.detect_and_remove_outliers()
+    print("DataFrame after removing outliers")
+    print(df_no_outliers.describe().T.reset_index().round(2).to_string(index=False))
+
+    # Plot box plots after removing outliers
+    print("Box Plots After Removing Outliers")
+    plot_box_plots(df_no_outliers, "After Removing Outliers")
 
     # PCA
-    processor = DataProcessor(df_clean)
+    processor = DataProcessor(df_no_outliers)
     principal_components, n_components_95, variance_explained = processor.perform_pca()
 
     print(f"Number of components to explain 95% of the variance: {n_components_95}")
     print(f"Cumulative explained variance by {n_components_95} components: {variance_explained * 100:.2f}%")
 
-    # Perform normality test on PCA results
-    processor.normality_test(principal_components)
+    # Perform normality test on original features
+    numeric_features = df_no_outliers.select_dtypes(include=[np.number])
 
-    # Perform Ksquare normality test on PCA results
-    processor.normality_test(principal_components)
-    plotter = Plotter(df_clean)
+
+    # Perform K-square normality test on original features
+    processor = DataProcessor(df_no_outliers)
+    processor.normality_test_Ksquare(numeric_features)
+
+    plotter = Plotter(df_no_outliers)
     # Data exploration
-    explorer = DataExplorer(df_clean)
+    explorer = DataExplorer(df_no_outliers)
     explorer.explore_data()
     explorer.plot_histograms()
 

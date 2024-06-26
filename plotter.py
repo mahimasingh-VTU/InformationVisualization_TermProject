@@ -60,15 +60,6 @@ class Plotter:
         plt.show()
 
 
-
-    # def plot_heatmap(self):
-    #     plt.figure(figsize=(10, 8))
-    #     sns.heatmap(self.df.corr(), annot=True, cmap='coolwarm')
-    #     plt.title('Correlation Heatmap', fontsize=20, fontfamily='serif', color='blue')
-    #     plt.show()
-
-
-
     def plot_count(self, column, title, xlabel, ylabel):
         plt.figure(figsize=(12, 8))
         sns.countplot(x=self.df[column], palette='viridis')
@@ -165,8 +156,15 @@ class Plotter:
             g = sns.pairplot(self.df[columns], plot_kws={'alpha': 0.6, 's': 80, 'edgecolor': 'k'})
         else:
             g = sns.pairplot(self.df, plot_kws={'alpha': 0.6, 's': 80, 'edgecolor': 'k'})
+
         g.fig.suptitle(title, fontsize=15, fontfamily='serif', color='blue')
-        plt.subplots_adjust(top=0.9)
+        g.fig.subplots_adjust(top=0.95, right=0.95)
+
+        # Set xlabel and ylabel for each plot
+        for ax in g.axes.flatten():
+            ax.set_xlabel(ax.get_xlabel(), fontsize=12, fontfamily='serif', color='darkred')
+            ax.set_ylabel(ax.get_ylabel(), fontsize=12, fontfamily='serif', color='darkred')
+
         plt.show()
 
     def plot_heatmap(self, title='Correlation Heatmap'):
@@ -178,20 +176,15 @@ class Plotter:
             return
 
         corr = numeric_df.corr()
-
-        # Verify the column names
-        print("Columns for Heatmap:")
-        print(corr.columns)
-
         sns.heatmap(corr, annot=True, cmap='coolwarm', cbar=True,
                     xticklabels=corr.columns, yticklabels=corr.columns)
 
         plt.title(title, fontsize=20, fontfamily='serif', color='blue')
         plt.xlabel('Features', fontsize=15, fontfamily='serif', color='darkred')
         plt.ylabel('Features', fontsize=15, fontfamily='serif', color='darkred')
-        plt.xticks(rotation=45, ha='right', fontsize=12)  # Increase font size for x-ticks
-        plt.yticks(rotation=0, fontsize=12)  # Increase font size for y-ticks
-        plt.tight_layout()  # Adjust layout to fit everything nicely
+        plt.xticks(rotation=45, ha='right', fontsize=12)
+        plt.yticks(rotation=0, fontsize=12)
+        plt.tight_layout()
         plt.show()
 
     def plot_hist_kde(self, column, title=None):

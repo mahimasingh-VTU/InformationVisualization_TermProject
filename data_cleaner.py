@@ -1,5 +1,7 @@
 import pandas as pd
 from prettytable import PrettyTable
+import numpy as np
+import matplotlib as plt
 pd.set_option('display.float_format', '{:.2f}'.format)
 class DataCleaner:
     def __init__(self, df):
@@ -34,4 +36,15 @@ class DataCleaner:
         self.df['state'] = self.df['state'].str.lower()
         self.df['seller'] = self.df['seller'].str.lower()
 
+        return self.df
+
+    def detect_and_remove_outliers(self):
+        numeric_columns = self.df.select_dtypes(include=[np.number]).columns.tolist()
+        for column in numeric_columns:
+            Q1 = self.df[column].quantile(0.25)
+            Q3 = self.df[column].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            self.df = self.df[(self.df[column] >= lower_bound) & (self.df[column] <= upper_bound)]
         return self.df

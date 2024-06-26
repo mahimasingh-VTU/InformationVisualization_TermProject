@@ -151,7 +151,6 @@ if __name__ == "__main__":
 
     # New plot calls for the additional plots
     plotter.plot_stacked_bar('year', 'condition', 'Vehicle Sales by Condition and Year', 'Year', 'Count')
-    plotter.plot_area('year', 'sellingprice', 'Area Plot of Selling Prices Over Years')
     plotter.plot_violin('year', 'sellingprice', 'Violin Plot of Selling Prices by Year')
     plotter.plot_joint_kde_scatter('sellingprice', 'mmr', 'Joint KDE and Scatter Plot of Selling Price vs MMR')
     plotter.plot_rug('sellingprice', 'Rug Plot of Selling Prices')
@@ -162,8 +161,6 @@ if __name__ == "__main__":
     plotter.plot_swarm('year', 'sellingprice', 'Swarm Plot of Selling Prices by Year')
 
 
-
-
-    # #Create the Dash app
-    # my_app = create_dash_app()
-    # my_app.run_server(port=8050, host='0.0.0.0')
+    #Create the Dash app
+    my_app = create_dash_app()
+    my_app.run_server(port=8050, host='0.0.0.0')

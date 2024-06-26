@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import numpy as np
 import plotly.express as px
-import plotly.graph_objects as go
 from data_cleaner import DataCleaner
 from sklearn.preprocessing import StandardScaler
 
@@ -41,8 +39,6 @@ plt.xlabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Frequency', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 
@@ -54,12 +50,10 @@ plt.xlabel('Odometer Reading', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Density', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
-
-# 4.========= Bar Plot (Grouped): Average Selling Prices by Make and Condition =========
+# TODO - change make to body
+# 4.========= Bar Plot (Grouped): Average Selling Prices by Body and Condition =========
 avg_prices = df.groupby(['make', 'condition'])['sellingprice'].mean().reset_index()
 plt.figure(figsize=(15, 8))
 sns.barplot(x='make', y='sellingprice', hue='condition', data=avg_prices)
@@ -68,11 +62,9 @@ plt.xlabel('Make', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Average Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
-
+# TODO - change models to body clean body first
 # 5.========= Count Plot: Frequency of Different Vehicle Models =========
 plt.figure(figsize=(15, 8))
 sns.countplot(x='model', data=df, order=df['model'].value_counts().index)
@@ -81,8 +73,6 @@ plt.xlabel('Vehicle Model', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Frequency', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 # 6.========= Pie Chart: Market Share of Top 10 Vehicle Makes =========
@@ -102,14 +92,14 @@ plt.xlabel('Odometer Reading', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 
 # 8.========= Pair Plot: Relationships Between Selling Price, MMR, Odometer, and Year =========
 selected_columns = df[['sellingprice', 'mmr', 'odometer', 'year']]
 sns.pairplot(selected_columns)
+plt.subplots_adjust(top=0.9)
+plt.suptitle('Relationships Between Selling Price, MMR, Odometer, and Year', fontsize=20, fontfamily='serif', color='blue')
 plt.show()
 
 
@@ -122,7 +112,7 @@ plt.tight_layout()
 plt.show()
 
 
-# 10.========= Box Plot: Selling Price Distribution by Vehicle Condition =========
+# # 10.========= Box Plot: Selling Price Distribution by Vehicle Condition =========
 plt.figure(figsize=(10, 6))
 sns.boxplot(x='condition', y='sellingprice', data=df, palette='coolwarm')
 plt.title('Selling Price Distribution by Vehicle Condition', fontsize=20, fontfamily='serif', color='blue')
@@ -130,8 +120,6 @@ plt.xlabel('Vehicle Condition', fontsize=15, fontfamily='serif', color='darkred'
 plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 
@@ -143,8 +131,6 @@ plt.xlabel('Year of Manufacture', fontsize=15, fontfamily='serif', color='darkre
 plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 # 12.========= Strip Plot: Selling Prices Across Different Body Types =========
@@ -154,24 +140,22 @@ plt.title('Selling Prices Across Different Body Types', fontsize=20, fontfamily=
 plt.xlabel('Body Type', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
-# plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
+plt.tight_layout()
 plt.show()
 
 
-# 13.========= Area Plot: Cumulative Sales by Make Over Years =========
-cumulative_sales = df.groupby(['make', 'year'])['sellingprice'].sum().groupby('make').cumsum()
-cumulative_sales_unstacked = cumulative_sales.unstack(level=0)
-plt.figure(figsize=(15, 8))
-cumulative_sales_unstacked.plot.area()
-plt.title('Cumulative Sales by Make Over Years', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('Year', fontsize=15, fontfamily='serif', color='darkred')
-plt.ylabel('Cumulative Sales', fontsize=15, fontfamily='serif', color='darkred')
+# 13.========= Area Plot: Stacked Sales Volume by Top 5 Makes Over Time =========
+sales_volume = df.groupby(['make', 'year'])['sellingprice'].sum()
+sales_volume_df = sales_volume.unstack(level=0)
+total_sales_volume = sales_volume_df.sum()
+top_5_makes = total_sales_volume.nlargest(5).index
+sales_volume_top_5 = sales_volume_df[top_5_makes]
+plt.figure(figsize=(10, 6))
+sales_volume_top_5.plot.area(stacked=True)
+plt.title('Stacked Sales Volume by Top 5 Makes Over Time', fontsize=15, fontfamily='serif', color='blue')
+plt.xlabel('Year', fontsize=12, fontfamily='serif', color='darkred')
+plt.ylabel('Sales Volume', fontsize=12, fontfamily='serif', color='darkred')
 plt.grid(True)
-plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 
@@ -184,8 +168,6 @@ plt.xlabel('Year', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Proportion', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 
@@ -197,8 +179,6 @@ plt.xlabel('MMR', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 # 16.========= Hexbin Plot: Density of Data Points for Selling Price vs. MMR =========
@@ -209,9 +189,9 @@ plt.title('Density of Data Points for Selling Price vs. MMR', fontsize=20, fontf
 plt.xlabel('MMR', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
+plt.xlim(0, df['mmr'].max()/2)
+plt.ylim(0, df['sellingprice'].max()/2)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 
 
@@ -255,19 +235,23 @@ fig.update_layout(
 )
 fig.show()
 
-
+# TODO - change
 # 18.========= Swarm Plot: Selling Prices by Make for Top 5 Selling Makes =========
-top_5_makes = df['make'].value_counts().nlargest(5).index
-df_top_5_makes = df[df['make'].isin(top_5_makes)]
-plt.figure(figsize=(15, 8))
-sns.swarmplot(x='make', y='sellingprice', data=df_top_5_makes)
-plt.title('Selling Prices by Make for Top 5 Selling Makes', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('Make', fontsize=15, fontfamily='serif', color='darkred')
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Create the swarm plot
+plt.figure(figsize=(10, 6))
+sns.swarmplot(x='condition', y='sellingprice', data=df, size=3)
+
+# Set the title and labels
+plt.title('Selling Prices by Vehicle Condition', fontsize=20, fontfamily='serif', color='blue')
+plt.xlabel('Vehicle Condition', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
+
+# Display the grid and tighten the layout
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\18_selling_prices_top_5_makes.png')
 
@@ -285,7 +269,6 @@ plt.tight_layout()
 plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
-plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\19_qq_plot_selling_price.png')
 
 
 # 20.========= Dist Plot: Compare Selling Price Distributions for Different Transmission Types =========
@@ -301,12 +284,11 @@ plt.xlabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
 plt.ylabel('Density', fontsize=15, fontfamily='serif', color='darkred')
 plt.grid(True)
 plt.tight_layout()
-plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
-plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.legend(prop={'size': 10}, title='Transmission Type')
 plt.show()
 plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\20_selling_price_distribution_transmission.png')
 
+# TODO - change
 # 21.========= Cluster Map: Hierarchical Clustering of Vehicles Based on Numerical Features =========
 import seaborn as sns
 numerical_features = df[['year', 'condition', 'odometer', 'mmr', 'sellingprice']]
@@ -331,9 +313,8 @@ plt.tight_layout()
 plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
-plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\22_density_sales_year_sellingprice.png')
 
-
+# TODO - change
 # 23.========= Rug Plot: Distribution of Individual Data Points for MMR Values =========
 plt.figure(figsize=(10, 6))
 sns.rugplot(data=df, x='mmr', height=0.5)
@@ -343,9 +324,9 @@ plt.grid(True)
 plt.tight_layout()
 plt.gca().xaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
-plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\23_distribution_mmr_values.png')
+#plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\23_distribution_mmr_values.png')
 
-
+# TODO - change
 # 24.========= Boxen Plot: Selling Prices Across Different States (Top 10 States by Sales Volume) =========
 sales_volume = df.groupby('state')['sellingprice'].sum()
 top_10_states = sales_volume.nlargest(10).index
@@ -363,160 +344,179 @@ plt.gca().yaxis.set_major_formatter(plt.FuncFormatter('{:.2f}'.format))
 plt.show()
 plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\24_selling_prices_states.png')
 
-# SUBPLOTS
+# ---------------------------SUBPLOTS-----------------------------------
 
-# 25.========= Price Trends and Factors  =========
-"""
-    Line plot: Average selling price trend over years 
-
-    Scatter plot: Selling price vs. Odometer reading 
-
-    Box plot: Selling price by vehicle condition 
-
-    Bar plot: Average selling price by top 10 makes 
+# 25.========= Pricing Dynamics and Market Value  =========
 """
 
-avg_price_trend = df.groupby('year')['sellingprice'].mean()
-avg_price_makes = df.groupby('make')['sellingprice'].mean().nlargest(10)
+    Line plot: Average selling price vs. average MMR over time
+    Scatter plot: Selling price vs. MMR, colored by vehicle condition
+    Box plot: Selling price distribution by make (top 10 makes)
+    Bar plot: Average price difference (Selling price - MMR) by vehicle age group
+"""
 
-# Create a new figure
-fig, axs = plt.subplots(2, 2, figsize=(20, 15))
+avg_price_mmr_year = df.groupby('year')[['sellingprice', 'mmr']].mean()
+top_10_makes = df.groupby('make')['sellingprice'].mean().nlargest(10)
+df['age'] = 2024 - df['year']  # Assuming the current year is 2024
+avg_price_diff_age = df.groupby('age').apply(lambda x: (x['sellingprice'] - x['mmr']).mean())
+fig, axs = plt.subplots(2, 2, figsize=(20, 20))
 
-# Line plot: Average selling price trend over years
-axs[0, 0].plot(avg_price_trend.index, avg_price_trend.values, color='skyblue', linewidth=2)
-axs[0, 0].set_title('Average Selling Price Trend Over Years', fontsize=15, fontfamily='serif', color='blue')
-axs[0, 0].set_xlabel('Year', fontsize=12, fontfamily='serif', color='darkred')
-axs[0, 0].set_ylabel('Average Selling Price', fontsize=12, fontfamily='serif', color='darkred')
-axs[0, 0].grid(True)
+# Plot line plot of average selling price vs. average MMR over time
+axs[0, 0].plot(avg_price_mmr_year.index, avg_price_mmr_year['sellingprice'], label='Selling Price')
+axs[0, 0].plot(avg_price_mmr_year.index, avg_price_mmr_year['mmr'], label='MMR')
+axs[0, 0].set_title('Average Selling Price vs. Average MMR Over Time')
+axs[0, 0].set_xlabel('Year')
+axs[0, 0].set_ylabel('Price')
+axs[0, 0].legend()
 
-# Scatter plot: Selling price vs. Odometer reading
-axs[0, 1].scatter(df['odometer'], df['sellingprice'], color='skyblue')
-plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\25_price_trends_factors.png')
+# Scatter plot: Selling price vs. MMR, colored by vehicle condition
+sns.scatterplot(x='mmr', y='sellingprice', hue='condition', data=df, ax=axs[0, 1])
+axs[0, 1].set_title('Selling Price vs. MMR')
+axs[0, 1].set_xlabel('MMR')
+axs[0, 1].set_ylabel('Selling Price')
+
+# Box plot: Selling price distribution by make (top 10 makes)
+sns.boxplot(x='make', y='sellingprice', data=df[df['make'].isin(top_10_makes.index)], ax=axs[1, 0])
+axs[1, 0].set_title('Selling Price Distribution by Make (Top 10 Makes)')
+axs[1, 0].set_xlabel('Make')
+axs[1, 0].set_ylabel('Selling Price')
+
+# Bar plot: Average price difference (Selling price - MMR) by vehicle age group
+sns.barplot(x=avg_price_diff_age.index, y=avg_price_diff_age.values, ax=axs[1, 1])
+axs[1, 1].set_title('Average Price Difference (Selling Price - MMR) by Vehicle Age Group')
+axs[1, 1].set_xlabel('Age Group')
+axs[1, 1].set_ylabel('Average Price Difference')
+
+plt.tight_layout()
+plt.show()
+
 
 
 # 26.========= Sales Volume Analysis =========
 """
-    Line plot: Total sales volume over years 
+    Line plot: Total sales volume over years
 
-    Stacked bar plot: Sales volume by vehicle condition for each year 
+    Stacked bar plot: Sales volume by vehicle condition for each year
 
-    Pie chart: Market share of top 5 makes 
+    Pie chart: Market share of top 5 makes
 
-    Bar plot: Sales volume by month (to show seasonality) 
+    Bar plot: Sales volume by month (to show seasonality)
 """
-# Calculate total sales volume over years
+
 sales_volume_years = df.groupby('year')['sellingprice'].sum()
 
-# Plot line plot of total sales volume over years
-plt.figure(figsize=(10, 6))
-plt.plot(sales_volume_years.index, sales_volume_years.values, color='skyblue', linewidth=2)
-plt.title('Total Sales Volume Over Years', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('Year', fontsize=15, fontfamily='serif', color='darkred')
-plt.ylabel('Total Sales Volume', fontsize=15, fontfamily='serif', color='darkred')
-plt.grid(True)
-plt.show()
-
-# Calculate sales volume by vehicle condition for each year
 sales_volume_condition_year = df.groupby(['year', 'condition'])['sellingprice'].sum().unstack()
 
-# Plot stacked bar plot of sales volume by vehicle condition for each year
-sales_volume_condition_year.plot(kind='bar', stacked=True, figsize=(10, 6))
-plt.title('Sales Volume by Vehicle Condition for Each Year', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('Year', fontsize=15, fontfamily='serif', color='darkred')
-plt.ylabel('Sales Volume', fontsize=15, fontfamily='serif', color='darkred')
-plt.grid(True)
-plt.show()
-
-# Calculate market share of top 5 makes
 top_5_makes = df['make'].value_counts().nlargest(5)
 
-# Plot pie chart of market share of top 5 makes
-top_5_makes.plot(kind='pie', autopct='%1.2f%%', figsize=(10, 6))
-plt.title('Market Share of Top 5 Makes', fontsize=20, fontfamily='serif', color='blue')
-plt.show()
+sales_volume_month = df.groupby('salemonth')['sellingprice'].sum()
 
-# Calculate sales volume by month
-sales_volume_month = df.groupby(df['saledate'].dt.month)['sellingprice'].sum()
+fig, axs = plt.subplots(2, 2, figsize=(20, 20))
+
+# Plot line plot of total sales volume over years
+axs[0, 0].plot(sales_volume_years.index, sales_volume_years.values, color='skyblue', linewidth=2)
+axs[0, 0].set_title('Total Sales Volume Over Years')
+axs[0, 0].set_xlabel('Year')
+axs[0, 0].set_ylabel('Total Sales Volume')
+
+# Plot stacked bar plot of sales volume by vehicle condition for each year
+sales_volume_condition_year.plot(kind='bar', stacked=True, ax=axs[0, 1])
+axs[0, 1].set_title('Sales Volume by Vehicle Condition for Each Year')
+axs[0, 1].set_xlabel('Year')
+axs[0, 1].set_ylabel('Sales Volume')
+
+# Plot pie chart of market share of top 5 makes
+axs[1, 0].pie(top_5_makes, labels=top_5_makes.index, autopct='%1.1f%%')
+axs[1, 0].set_title('Market Share of Top 5 Makes')
 
 # Plot bar plot of sales volume by month
-sales_volume_month.plot(kind='bar', figsize=(10, 6))
-plt.title('Sales Volume by Month', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('Month', fontsize=15, fontfamily='serif', color='darkred')
-plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\26_sales_volume_analysis.png')
+axs[1, 1].bar(sales_volume_month.index, sales_volume_month.values, color='skyblue')
+axs[1, 1].set_title('Sales Volume by Month')
+axs[1, 1].set_xlabel('Month')
+axs[1, 1].set_ylabel('Sales Volume')
+
+plt.tight_layout()
+plt.show()
+
+
 
 # 27.========= Vehicle Characteristics and Their Impact =========
 """
-    Scatter plot: Year vs. Odometer reading, colored by selling price 
+    Scatter plot: Year vs. Odometer reading, colored by selling price
 
-    Histogram: Distribution of vehicle ages in the dataset 
+    Histogram: Distribution of vehicle ages in the dataset
 
-    Bar plot: Average MMR by vehicle condition 
+    Bar plot: Average MMR by vehicle condition
 
-    Heatmap: Correlation between numerical features (year, odometer, selling price, MMR) 
+    Heatmap: Correlation between numerical features (year, odometer, selling price, MMR)
 """
-# Calculate vehicle age
+
 df['age'] = 2024 - df['year']  # Assuming the current year is 2024
 
-# Create a new figure for subplots
 fig, axs = plt.subplots(2, 2, figsize=(20, 15))
 
 # Scatter plot: Year vs. Odometer reading, colored by selling price
 sns.scatterplot(x='year', y='odometer', hue='sellingprice', data=df, ax=axs[0, 0])
-axs[0, 0].set_title('Year vs. Odometer Reading', fontsize=15, fontfamily='serif', color='blue')
-axs[0, 0].set_xlabel('Year', fontsize=12, fontfamily='serif', color='darkred')
-axs[0, 0].set_ylabel('Odometer Reading', fontsize=12, fontfamily='serif', color='darkred')
-axs[0, 0].grid(True)
+axs[0, 0].set_title('Year vs. Odometer Reading')
+axs[0, 0].set_xlabel('Year')
+axs[0, 0].set_ylabel('Odometer Reading')
 
 # Histogram: Distribution of vehicle ages in the dataset
 sns.histplot(df['age'], kde=False, ax=axs[0, 1])
-axs[0, 1].set_title('Distribution of Vehicle Ages', fontsize=15, fontfamily='serif', color='blue')
-axs[0, 1].set_xlabel('Age', fontsize=12, fontfamily='serif', color='darkred')
-axs[0, 1].set_ylabel('Frequency', fontsize=12, fontfamily='serif', color='darkred')
-axs[0, 1].grid(True)
+axs[0, 1].set_title('Distribution of Vehicle Ages')
+axs[0, 1].set_xlabel('Age')
+axs[0, 1].set_ylabel('Frequency')
 
 # Bar plot: Average MMR by vehicle condition
 avg_mmr_condition = df.groupby('condition')['mmr'].mean()
 sns.barplot(x=avg_mmr_condition.index, y=avg_mmr_condition.values, ax=axs[1, 0])
-axs[1, 0].set_title('Average MMR by Vehicle Condition', fontsize=15, fontfamily='serif', color='blue')
-plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\27_vehicle_characteristics_impact.png')
+axs[1, 0].set_title('Average MMR by Vehicle Condition')
+axs[1, 0].set_xlabel('Condition')
+axs[1, 0].set_ylabel('Average MMR')
+
+# Heatmap: Correlation between numerical features (year, odometer, selling price, MMR)
+numerical_features = df[['year', 'odometer', 'sellingprice', 'mmr']]
+correlation = numerical_features.corr()
+sns.heatmap(correlation, annot=True, ax=axs[1, 1])
+axs[1, 1].set_title('Correlation Between Numerical Features')
+
+plt.tight_layout()
+plt.show()
 
 
-# 28.========= Regional and Categorical Analysis =========
+# 28.========= Regional Analysis and Seasonal Trends =========
 """
-    Choropleth map: Sales volume by state 
+1. Bar plot: Top 10 states by average selling price
 
-    Bar plot: Top 10 states by average selling price 
+2. Bar plot: Top 10 states by sales volume
 
-    Stacked bar plot: Proportion of transmission types for top 5 makes 
+3. Heatmap: Monthly sales volume by year
 
-    Violin plot: Distribution of selling prices for different body types 
+4. Line plot: Average selling price trend for top 5 states over time
 """
-# Choropleth map: Sales volume by state
-sales_volume_state = df.groupby('state')['sellingprice'].sum().reset_index()
-fig = go.Figure(data=go.Choropleth(
-    locations=sales_volume_state['state'],
-    z=sales_volume_state['sellingprice'].astype(float),
-    locationmode='USA-states',
-    colorscale='Reds',
-))
-fig.update_layout(
-    title_text='Sales Volume by State',
-    geo_scope='usa',
-)
-fig.show()
-
-# Bar plot: Top 10 states by average selling price
-avg_price_state = df.groupby('state')['sellingprice'].mean().nlargest(10).reset_index()
-fig = px.bar(avg_price_state, x='state', y='sellingprice', title='Top 10 States by Average Selling Price')
-fig.show()
-
-# Stacked bar plot: Proportion of transmission types for top 5 makes
-top_5_makes = df['make'].value_counts().nlargest(5).index
-df_top_5_makes = df[df['make'].isin(top_5_makes)]
-transmission_proportions = df_top_5_makes.groupby(['make', 'transmission']).size().unstack().apply(lambda x: x/x.sum(), axis=1)
-transmission_proportions.plot(kind='bar', stacked=True, title='Proportion of Transmission Types for Top 5 Makes')
-
-# Violin plot: Distribution of selling prices for different body types
-fig = px.violin(df, x='body', y='sellingprice', box=True, title='Distribution of Selling Prices for Different Body Types')
-fig.show()
-plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\28_regional_categorical_analysis.png')
+avg_price_states = df.groupby('state')['sellingprice'].mean().nlargest(10)
+sales_volume_states = df.groupby('state')['sellingprice'].sum().nlargest(10)
+sales_volume_month_year = df.groupby(['saleyear', 'salemonth'])['sellingprice'].sum().unstack()
+top_5_states = df['state'].value_counts().nlargest(5).index
+avg_price_trend_top_5_states = df[df['state'].isin(top_5_states)].groupby(['saleyear', 'state'])['sellingprice'].mean().unstack()
+fig, axs = plt.subplots(2, 2, figsize=(20, 20))
+sns.barplot(x=avg_price_states.index, y=avg_price_states.values, ax=axs[0, 0])
+axs[0, 0].set_title('Top 10 States by Average Selling Price')
+axs[0, 0].set_xlabel('State')
+axs[0, 0].set_ylabel('Average Selling Price')
+sns.barplot(x=sales_volume_states.index, y=sales_volume_states.values, ax=axs[0, 1])
+axs[0, 1].set_title('Top 10 States by Sales Volume')
+axs[0, 1].set_xlabel('State')
+axs[0, 1].set_ylabel('Sales Volume')
+sns.heatmap(sales_volume_month_year, annot=True, ax=axs[1, 0])
+axs[1, 0].set_title('Monthly Sales Volume by Year')
+axs[1, 0].set_xlabel('Month')
+axs[1, 0].set_ylabel('Year')
+for state in top_5_states:
+    axs[1, 1].plot(avg_price_trend_top_5_states.index, avg_price_trend_top_5_states[state], label=state)
+axs[1, 1].set_title('Average Selling Price Trend for Top 5 States Over Time')
+axs[1, 1].set_xlabel('Year')
+axs[1, 1].set_ylabel('Average Selling Price')
+axs[1, 1].legend()
+plt.tight_layout()
+plt.show()

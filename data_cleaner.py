@@ -18,6 +18,10 @@ class DataCleaner:
         self.df['transmission'].fillna('automatic', inplace=True)
         self.df.dropna(axis=0, inplace=True)
         self.df['year'] = pd.to_datetime(self.df['year'], format='%Y').dt.year
+        self.df['saledate'] = pd.to_datetime(self.df['saledate'], utc=True, format='mixed').dt.date # new format - yyyy-mm-dd
+        self.df['saleyear'] = pd.to_datetime(self.df['saledate'], format='%Y').dt.year
+        self.df['salemonth'] = pd.to_datetime(self.df['saledate'], format='%m').dt.month
+        self.df['saleday'] = pd.to_datetime(self.df['saledate'], format='%d').dt.day
         condition_mapping = {range(10, 21): 1, range(20, 31): 2, range(30, 41): 3, range(40, 51): 4}
         for k, v in condition_mapping.items():
             self.df['condition'].replace(k, v, inplace=True)

@@ -3,3 +3,8 @@ flask
 pandas
 numpy
 plotly
+prettytable
+matplotlib
+seaborn
+scipy
+scikit-learn

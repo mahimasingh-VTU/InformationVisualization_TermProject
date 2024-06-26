@@ -1,12 +1,10 @@
 import urllib
-
 import dash as dash
 import pandas as pd
 import plotly.express as px
 from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from plotly import graph_objs as go
-
 from data_cleaner import DataCleaner
 
 df_raw = pd.read_csv('car_prices.csv')

@@ -40,6 +40,7 @@ class DataCleaner:
         self.df['state'] = self.df['state'].str.lower()
         self.df['seller'] = self.df['seller'].str.lower()
 
+        self.df = self.df[self.df['odometer'] < 500000]
         return self.df
 
     def detect_and_remove_outliers(self):

@@ -40,7 +40,7 @@ class DataExplorer:
         print(missing_table)
     def plot_histograms(self):
 
-        relevant_cols = ['sellingprice', 'condition', 'mmr', 'year']
+        relevant_cols = ['sellingprice', 'condition', 'mmr', 'year','odometer']
 
         numeric_cols = [col for col in relevant_cols if
                         col in self.df.columns and np.issubdtype(self.df[col].dtype, np.number)]

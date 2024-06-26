@@ -13,7 +13,7 @@ print(df.info())
 print(df.head())
 """
 Numerical features: ['year', 'condition', 'odometer', 'mmr', 'sellingprice']
-Categorical features: ['make', 'model', 'trim', 'body', 'transmission', 'state', 'color', 'interior', 'seller', 'saledate']
+Categorical features: ['make', 'model', 'trim', 'body', 'transmission', 'state', 'color', 'interior', 'seller', 'saledate', 'salemonth', 'saleday', 'saleyear']
 """
 
 

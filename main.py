@@ -123,49 +123,49 @@ if __name__ == "__main__":
 
     # Generate plots
 
-    plotter.plot_bar_vis('make', 'sellingprice', 'Brands vs Selling Price by Transmission', 'Brands', 'Selling Price')
-    plotter.plot_scatter('sellingprice', 'mmr', 'Selling Price vs MMR', 'Selling Price', 'MMR')
-    plotter.plot_heatmap()
-    plotter.plot_line('year', 'sellingprice', 'Manufacturing Year vs Selling Price', 'Manufacturing Year',
-                      'Selling Price')
-    # plotter.plot_box('year', 'Distribution of Manufacturing Years')
-    plotter.plot_histogram('mmr', 'Manheim Market Report (MMR) Distribution')
-    plotter.plot_count('state', 'Count of Distribution by State', 'State', 'Count')
-    plotter.plot_reg('sellingprice', 'mmr', 'Regression: Selling Price vs MMR', 'Selling Price', 'MMR')
-
-    plotter.plot_histogram('condition', 'Vehicle Condition Distribution')
-
-    plotter.plot_pie('make', 'Distribution of Vehicle Makes')
-    plotter.plot_count('model', 'Count of Vehicle Models', 'Model', 'Count')
-    plotter.subplot_story()
-
-    # Additional plots
-    plotter.plot_line('year', 'sellingprice', 'Average Selling Price by Year', 'Year', 'Average Selling Price')
-    plotter.plot_dist('sellingprice', 'Selling Price Distribution')
-    plotter.plot_pair(columns=['sellingprice', 'mmr', 'odometer'],
-                      title='Pair Plot of Selling Price, MMR, and Odometer')
-    plotter.plot_heatmap('Correlation Heatmap')
-    plotter.plot_hist_kde('odometer', 'Odometer Distribution with KDE')
-    plotter.plot_qq('sellingprice', 'QQ Plot of Selling Price')
-    plotter.plot_kde('mmr', 'KDE Plot of MMR')
-    plotter.plot_im_reg('sellingprice', 'odometer', 'Selling Price vs Odometer with Regression Line')
-    plotter.plot_box('condition', 'sellingprice', None, 'Box Plot of Selling Price by Condition')
-
-    # New plot calls for the additional plots
-    plotter.plot_stacked_bar('year', 'condition', 'Vehicle Sales by Condition and Year', 'Year', 'Count')
-    plotter.plot_violin('year', 'sellingprice', 'Violin Plot of Selling Prices by Year')
-    plotter.plot_joint_kde_scatter('sellingprice', 'mmr', 'Joint KDE and Scatter Plot of Selling Price vs MMR')
-    plotter.plot_rug('sellingprice', 'Rug Plot of Selling Prices')
-    plotter.plot_3d_scatter('year', 'sellingprice', 'mmr', '3D Scatter Plot of Year, Selling Price and MMR')
-
-    plotter.plot_hexbin('sellingprice', 'mmr', 'Hexbin Plot of Selling Price vs MMR')
-    plotter.plot_strip('condition', 'sellingprice', 'Strip Plot of Selling Price by Condition')
-    plotter.plot_swarm('year', 'sellingprice', 'Swarm Plot of Selling Prices by Year')
-    print("Grouped Bar Plot")
-    plotter.plot_grouped_bar('make', 'sellingprice', 'year', 'Sales Price by Make and Year')
-
-    print("Boxen Plot")
-    plotter.plot_boxen('year', 'sellingprice', 'Boxen Plot of Selling Prices by Year')
+    # plotter.plot_bar_vis('make', 'sellingprice', 'Brands vs Selling Price by Transmission', 'Brands', 'Selling Price')
+    # plotter.plot_scatter('sellingprice', 'mmr', 'Selling Price vs MMR', 'Selling Price', 'MMR')
+    # plotter.plot_heatmap()
+    # plotter.plot_line('year', 'sellingprice', 'Manufacturing Year vs Selling Price', 'Manufacturing Year',
+    #                   'Selling Price')
+    # # plotter.plot_box('year', 'Distribution of Manufacturing Years')
+    # plotter.plot_histogram('mmr', 'Manheim Market Report (MMR) Distribution')
+    # plotter.plot_count('state', 'Count of Distribution by State', 'State', 'Count')
+    # plotter.plot_reg('sellingprice', 'mmr', 'Regression: Selling Price vs MMR', 'Selling Price', 'MMR')
+    #
+    # plotter.plot_histogram('condition', 'Vehicle Condition Distribution')
+    #
+    # plotter.plot_pie('make', 'Distribution of Vehicle Makes')
+    # plotter.plot_count('model', 'Count of Vehicle Models', 'Model', 'Count')
+    # plotter.subplot_story()
+    #
+    # # Additional plots
+    # plotter.plot_line('year', 'sellingprice', 'Average Selling Price by Year', 'Year', 'Average Selling Price')
+    # plotter.plot_dist('sellingprice', 'Selling Price Distribution')
+    # plotter.plot_pair(columns=['sellingprice', 'mmr', 'odometer'],
+    #                   title='Pair Plot of Selling Price, MMR, and Odometer')
+    # plotter.plot_heatmap('Correlation Heatmap')
+    # plotter.plot_hist_kde('odometer', 'Odometer Distribution with KDE')
+    # plotter.plot_qq('sellingprice', 'QQ Plot of Selling Price')
+    # plotter.plot_kde('mmr', 'KDE Plot of MMR')
+    # plotter.plot_im_reg('sellingprice', 'odometer', 'Selling Price vs Odometer with Regression Line')
+    # plotter.plot_box('condition', 'sellingprice', None, 'Box Plot of Selling Price by Condition')
+    #
+    # # New plot calls for the additional plots
+    # plotter.plot_stacked_bar('year', 'condition', 'Vehicle Sales by Condition and Year', 'Year', 'Count')
+    # plotter.plot_violin('year', 'sellingprice', 'Violin Plot of Selling Prices by Year')
+    # plotter.plot_joint_kde_scatter('sellingprice', 'mmr', 'Joint KDE and Scatter Plot of Selling Price vs MMR')
+    # plotter.plot_rug('sellingprice', 'Rug Plot of Selling Prices')
+    # plotter.plot_3d_scatter('year', 'sellingprice', 'mmr', '3D Scatter Plot of Year, Selling Price and MMR')
+    #
+    # plotter.plot_hexbin('sellingprice', 'mmr', 'Hexbin Plot of Selling Price vs MMR')
+    # plotter.plot_strip('condition', 'sellingprice', 'Strip Plot of Selling Price by Condition')
+    # plotter.plot_swarm('year', 'sellingprice', 'Swarm Plot of Selling Prices by Year')
+    # print("Grouped Bar Plot")
+    # plotter.plot_grouped_bar('make', 'sellingprice', 'year', 'Sales Price by Make and Year')
+    #
+    # print("Boxen Plot")
+    # plotter.plot_boxen('year', 'sellingprice', 'Boxen Plot of Selling Prices by Year')
 
     #Create the Dash app
     my_app = create_dash_app()

@@ -36,13 +36,13 @@ class DataCleaner:
 
         self.df['make'] = self.df['make'].str.title()
         self.df['model'] = self.df['model'].str.title()
-        self.df['trim'] = self.df['trim'].str.lower()
+       # self.df['trim'] = self.df['trim'].str.lower()
         self.df['body'] = self.df['body'].str.lower()
         self.df['transmission'] = self.df['transmission'].str.lower()
         self.df['color'] = self.df['color'].str.lower()
         self.df['interior'] = self.df['interior'].str.lower()
         self.df['state'] = self.df['state'].str.upper()
-        self.df['seller'] = self.df['seller'].str.lower()
+      #  self.df['seller'] = self.df['seller'].str.lower()
 
         self.df['body'] = self.df['body'].str.replace(r'.*sedan.*', 'sedan', regex=True)
         self.df['body'] = self.df['body'].str.replace(r'.*convertible.*', 'convertible', regex=True)

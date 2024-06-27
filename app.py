@@ -7,6 +7,16 @@ import matplotlib.pyplot as plt
 from prettytable import PrettyTable
 import numpy as np
 from dash_app import create_dash_app
+import urllib
+import dash as dash
+import pandas as pd
+import plotly.express as px
+from dash import html, dcc
+from dash.dependencies import Input, Output, State
+from plotly import graph_objs as go
+from data_cleaner import DataCleaner
+import base64
+import os
 
 pd.set_option('display.float_format', '{:.2f}'.format)
 
@@ -50,15 +60,14 @@ def plot_initial_histograms(dataframe):
             plt.ylabel('Frequency')
             plt.grid(True)
             plt.show()
+# Function to encode image file to base64
+def encode_image(image_file):
+    with open(image_file, 'rb') as file:
+        return base64.b64encode(file.read()).decode('ascii')
 
-import urllib
-import dash as dash
-import pandas as pd
-import plotly.express as px
-from dash import html, dcc
-from dash.dependencies import Input, Output, State
-from plotly import graph_objs as go
-from data_cleaner import DataCleaner
+# Assuming 'logo.png' is in the same directory as your script
+logo_path = os.path.join(os.path.dirname(__file__), 'logo.png')
+encoded_logo = encode_image(logo_path)
 
 df_raw = pd.read_csv('car_prices.csv')
 df = DataCleaner(df_raw).clean_data()
@@ -77,7 +86,7 @@ server = my_app.server
 # =============================creating tabs================================
 my_app.layout = html.Div([
     html.Div([
-        html.Img(src='logo.png', style={'height': '60px', 'width': '60px'}),
+        html.Img(src=f'data:image/png;base64,{encoded_logo}', style={'height': '60px', 'width': '60px'}),
         html.Pre("  "),
         html.H2('Car Sales Dashboard', style={'textAlign': 'center'}),
     ], style={'display': 'flex', 'align-items': 'center'}),

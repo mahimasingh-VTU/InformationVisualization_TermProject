@@ -8,7 +8,7 @@ import seaborn as sns
 from scipy.stats import shapiro, anderson, normaltest
 
 from prettytable import PrettyTable
-from scipy.stats import normaltest
+
 
 class DataProcessor:
     def __init__(self, df):

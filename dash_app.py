@@ -556,7 +556,7 @@ def create_dash_app():
         html.Header('Car Insights', style={'textAlign': 'center'}),
         html.Br(),
         html.Div([
-            # 1. _________________________________
+            # 1. __________________Price range distribution
             dcc.Graph(id='mm-price-range-distribution'),
             html.Br(),
             html.P('Choose a make:'),
@@ -603,7 +603,7 @@ def create_dash_app():
         ]),
         html.Br(),
         html.Div([
-            # 3. _____________________________________
+            # 3. ________________Average price by make_____________________
             dcc.Graph(id='mm-avg-price-make-model'),
             html.Br(),
             html.P('Choose the make(s) to display:'),
@@ -616,7 +616,7 @@ def create_dash_app():
         ]),
         html.Br(),
         html.Div([
-            # 4. _____________________________________
+            # 4. ________________Body Type distribution_____________________
             dcc.Graph(id='mm-body-type-distribution'),
             html.Br(),
             html.P('Choose a make:'),
@@ -628,7 +628,7 @@ def create_dash_app():
         ]),
         html.Br(),
         html.Div([
-            # 5. _____________________________________
+            # 5. _________________price vs odometer____________________
             dcc.Graph(id='mm-price-vs-odometer'),
             html.Br(),
             html.P('Choose a make:'),
@@ -819,7 +819,85 @@ def create_dash_app():
 
     # ======================Static graphs tab layout===============================
     static_graphs_layout = html.Div([
-
+        html.Title('Static Graphs', style={'textAlign': 'center'}),
+        html.Br(),
+        html.H3('Total Sales Volume by Year'),
+        html.Img(src='staticgraphs/1_total_sales_volume.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Distribution of Selling Prices'),
+        html.Img(src='staticgraphs/2_distribution_selling_prices.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Distribution of Odometer Readings'),
+        html.Img(src='staticgraphs/3_distribution_odometer_readings.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Average Selling Prices by Make and Condition'),
+        html.Img(src='staticgraphs/4_avg_selling_prices_make_condition.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Frequency of Vehicle Models'),
+        html.Img(src='staticgraphs/5_frequency_vehicle_models.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Market Share of Top 10 Makes'),
+        html.Img(src='staticgraphs/6_market_share_top_10_makes.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Selling Price vs Odometer Reading'),
+        html.Img(src='staticgraphs/7_selling_price_vs_odometer.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Pair Plot of Numeric Features'),
+        html.Img(src='staticgraphs/8_pair_plot.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Correlation Heatmap of Numeric Features'),
+        html.Img(src='staticgraphs/9_correlation_heatmap.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Selling Price Distribution by Condition'),
+        html.Img(src='staticgraphs/10_selling_price_distribution_condition.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Selling Price Distribution by Year'),
+        html.Img(src='staticgraphs/11_selling_price_distribution_year.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Selling Prices by Body Types'),
+        html.Img(src='staticgraphs/12_selling_prices_body_types.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Stacked Sales Volume by Top 5 Makes'),
+        html.Img(src='staticgraphs/13_stacked_sales_volume_top5_makes.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Proportion of Sales by Condition and Year'),
+        html.Img(src='staticgraphs/14_proportion_sales_condition_year.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Joint Plot of Selling Price and MMR'),
+        html.Img(src='staticgraphs/15_jointplot_sellingprice_mmr.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Hexbin Plot of Selling Price and MMR'),
+        html.Img(src='staticgraphs/16_hexbin_sellingprice_mmr.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('3D Scatter Plot'),
+        html.Img(src='staticgraphs/17_3d_scatter_year_sellingprice_odometer_1.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Top 5 Makes by Selling Prices'),
+        html.Img(src='staticgraphs/18_selling_prices_top_5_makes.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('QQ Plot of Selling Price'),
+        html.Img(src='staticgraphs/19_selling_price_qq_plot.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Distribution Plot of Transmission'),
+        html.Img(src='staticgraphs/20_distplot_transmission.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Contour Plot'),
+        html.Img(src='staticgraphs/22_density_sales_year_sellingprice.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Rug Plot of Selling Price'),
+        html.Img(src='staticgraphs/23_rug_plot.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Price Distribution by Make'),
+        html.Img(src='staticgraphs/25_pricing_dynamics_market_value.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Sales Volume Analysis'),
+        html.Img(src='staticgraphs/26_sales_volume_analysis.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Vehicle Characteristics Impact on Selling Price'),
+        html.Img(src='staticgraphs/27_vehicle_characteristics_impact.png', style={'height': '500px', 'width': '800px'}),
+        html.Br(),
+        html.H3('Count Distribution by State'),
+        html.Img(src='staticgraphs/28_Count_Distribution_State.png', style={'height': '500px', 'width': '800px'}),
     ])
 
     # =======================Feedback tab layout=======================

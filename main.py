@@ -121,7 +121,7 @@ if __name__ == "__main__":
     explorer.explore_data()
     explorer.plot_histograms()
 
-    # Generate plots
+    #Generate plots
 
     plotter.plot_bar_vis('make', 'sellingprice', 'Brands vs Selling Price by Transmission', 'Brands', 'Selling Price')
     plotter.plot_scatter('sellingprice', 'mmr', 'Selling Price vs MMR', 'Selling Price', 'MMR')

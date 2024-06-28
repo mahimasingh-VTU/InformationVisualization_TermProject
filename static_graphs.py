@@ -9,14 +9,6 @@ df_raw = pd.read_csv('car_prices.csv')
 df = DataCleaner(df_raw).clean_data()
 
 """
-Instructions:
-1. include legend (hue) in your static plot for comparison.
-2. All figures must include title, legend, x-label, y-label, and grid and they must be customized with assorted color, font size, line width.
-3. Make sure the information on the graph is not blocked.
-4. display all numbers with 2-digit decimal precision
-5. Title = [font: ‘serif’, color:’blue, size: large enough]
-6. X, Y label = [font: ‘serif’, ‘color’, darkred] size large enough
-
 Numerical features: ['year', 'condition', 'odometer', 'mmr', 'sellingprice']
 Categorical features: ['make', 'model', 'trim', 'body', 'transmission', 'state', 'color', 'interior', 'seller', 'saledate', 'salemonth', 'saleday', 'saleyear']
 """
@@ -52,26 +44,27 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
-# TODO - change make to body
+
 # 4.========= Bar Plot (Grouped): Average Selling Prices by Body and Condition =========
-avg_prices = df.groupby(['make', 'condition'])['sellingprice'].mean().reset_index()
-plt.figure(figsize=(15, 8))
-sns.barplot(x='make', y='sellingprice', hue='condition', data=avg_prices)
-plt.title('Average Selling Prices by Make and Condition', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('Make', fontsize=15, fontfamily='serif', color='darkred')
-plt.ylabel('Average Selling Price', fontsize=15, fontfamily='serif', color='darkred')
-plt.grid(True)
+plt.figure(figsize=(10, 6))
+bar_plot = sns.barplot(x='body', y='sellingprice', hue='condition', data=df, ci=None)
+plt.title('Average Selling Prices by Body and Condition')
+plt.xlabel('Body')
+plt.ylabel('Average Selling Price')
+plt.xticks(rotation=45)
+legend = plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)  # Move the legend to the right
+legend.set_title('Condition')
 plt.tight_layout()
 plt.show()
 
-# TODO - change models to body clean body first
-# 5.========= Count Plot: Frequency of Different Vehicle Models =========
-plt.figure(figsize=(15, 8))
-sns.countplot(x='model', data=df, order=df['model'].value_counts().index)
-plt.title('Frequency of Different Vehicle Models', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('Vehicle Model', fontsize=15, fontfamily='serif', color='darkred')
-plt.ylabel('Frequency', fontsize=15, fontfamily='serif', color='darkred')
-plt.grid(True)
+
+# 5.========= Count Plot: Frequency of Different Vehicle body =========
+plt.figure(figsize=(10, 6))
+sns.countplot(x='body', data=df)
+plt.title('Count plot of Different Vehicle Body')
+plt.xlabel('Body')
+plt.ylabel('Frequency')
+plt.xticks(rotation=45)  # Rotate x-axis labels for better visibility if they are long
 plt.tight_layout()
 plt.show()
 
@@ -237,21 +230,16 @@ fig.show()
 
 # TODO - change
 # 18.========= Swarm Plot: Selling Prices by Make for Top 5 Selling Makes =========
-import seaborn as sns
-import matplotlib.pyplot as plt
 
-# Create the swarm plot
 plt.figure(figsize=(10, 6))
-sns.swarmplot(x='condition', y='sellingprice', data=df, size=3)
+sns.swarmplot(x='make', y='sellingprice', data=df)
 
-# Set the title and labels
-plt.title('Selling Prices by Vehicle Condition', fontsize=20, fontfamily='serif', color='blue')
-plt.xlabel('Vehicle Condition', fontsize=15, fontfamily='serif', color='darkred')
-plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
-
-# Display the grid and tighten the layout
-plt.grid(True)
-plt.tight_layout()
+# plt.title('Selling Prices by Make', fontsize=20, fontfamily='serif', color='blue')
+# plt.xlabel('Make', fontsize=15, fontfamily='serif', color='darkred')
+# plt.ylabel('Selling Price', fontsize=15, fontfamily='serif', color='darkred')
+#
+# plt.grid(True)
+# plt.tight_layout()
 plt.show()
 plt.savefig('C:\\Github\\InformationVisualization_TermProject\\staticgraphs\\18_selling_prices_top_5_makes.png')
 
